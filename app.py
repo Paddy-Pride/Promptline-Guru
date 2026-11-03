@@ -3,8 +3,8 @@ import streamlit as st
 from groq import Groq
 
 # ============================================================
-# Craftline
-# From rough idea to professional prompt.
+# Promptline Guru
+# Plain language in, professional AI instructions out.
 # Groq API only. Voice input via Groq Whisper.
 # ============================================================
 
@@ -14,7 +14,7 @@ if "GROQ_API_KEY" in st.secrets:
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 st.set_page_config(
-    page_title="Craftline",
+    page_title="Promptline Guru",
     page_icon=None,
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -37,7 +37,7 @@ st.markdown("""
     details[open] summary { border-left: 5px solid #FFCC00; }
     .stAlert { border-radius: 12px; }
     .stCodeBlock pre { background-color: #1A1A1A !important; color: #FFCC00 !important; border-radius: 12px; }
-    .cl-tag { display: inline-block; background: #FFCC00; color: #000000; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.7rem; border-radius: 20px; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .plg-tag { display: inline-block; background: #FFCC00; color: #000000; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.7rem; border-radius: 20px; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -98,9 +98,9 @@ def transcribe(audio_bytes, filename):
     )
     return transcription
 
-st.markdown('<span class="cl-tag">CRAFTLINE</span>', unsafe_allow_html=True)
+st.markdown('<span class="plg-tag">PROMPTLINE GURU</span>', unsafe_allow_html=True)
 st.title("PROMPT ENGINEER")
-st.caption("From rough idea to professional prompt. Clear instructions that produce quality output on any AI model.")
+st.caption("Plain language in, professional AI instructions out. Quality prompts for any domain, without learning prompt engineering.")
 
 left, right = st.columns([3, 1])
 
