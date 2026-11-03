@@ -1,6 +1,5 @@
 import os
 import streamlit as st
-import streamlit.components.v1 as components
 from groq import Groq
 
 if "GROQ_API_KEY" in st.secrets:
@@ -17,15 +16,12 @@ st.markdown("""
     h1 { font-size: 2.2rem; border-bottom: 4px solid #FFCC00; padding-bottom: 0.4rem; display: inline-block; color: #000; font-weight: 700; }
     .stButton > button { background-color: #FFCC00; color: #000; border: 2px solid #000; border-radius: 30px; font-weight: 700; padding: 0.6rem 1.8rem; }
     .stButton > button:hover { background-color: #000; color: #FFCC00; }
+    .stLinkButton > a { background-color: #FFF9E0; color: #000; border: 1px solid #E0E0E0; border-radius: 12px; padding: 0.5rem 1rem; font-weight: 700; font-size: 0.85rem; text-decoration: none; width: 100%; text-align: center; }
+    .stLinkButton > a:hover { background-color: #FFCC00; border-color: #FFCC00; }
     .stTextArea textarea { border-radius: 12px; border: 1px solid #CCC; }
     .stTextArea textarea:focus { border-color: #FFCC00; box-shadow: 0 0 0 2px rgba(255,204,0,0.3); }
     .stCodeBlock pre { background: #1A1A1A !important; color: #FFCC00 !important; border-radius: 12px; }
     .plg-tag { display: inline-block; background: #FFCC00; color: #000; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.7rem; border-radius: 20px; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
-    .tool-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 1rem 0; }
-    .tool-card { display: flex; flex-direction: column; align-items: center; padding: 12px 16px; border: 1px solid #E0E0E0; border-radius: 12px; cursor: pointer; transition: all 0.15s; background: #FFF; min-width: 80px; }
-    .tool-card:hover { border-color: #FFCC00; background: #FFF9E0; }
-    .tool-card img { width: 32px; height: 32px; margin-bottom: 6px; }
-    .tool-card span { font-size: 0.8rem; font-weight: 700; color: #000; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -87,30 +83,15 @@ def extract_file_text(f):
         return text
     return data.decode("utf-8", errors="replace")
 
-def copy_and_open_button(prompt_text, tool):
-    safe = prompt_text.replace("\\", "\\\\").replace("`", "\\`").replace("$", "\\$").replace("\n", "\\n")
-    html = f"""
-    <div class="tool-card" onclick="
-        navigator.clipboard.writeText(`{safe}`).then(function() {{
-            window.open('{tool["url"]}', '_blank');
-        }});
-    ">
-        <img src="{tool["icon"]}" onerror="this.style.display='none'">
-        <span>{tool["name"]}</span>
-    </div>
-    """
-    return html
-
 st.markdown('<span class="plg-tag">PROMPTLINE GURU</span>', unsafe_allow_html=True)
 st.title("PROMPT ENGINEER")
-st.caption("Write, upload, or speak. Get a professional prompt. Click a tool to open with prompt copied.")
+st.caption("Write, upload, or speak. Get a professional prompt. Pick a tool to open and paste.")
 
 c1, c2, c3 = st.columns(3)
 with c1: domain = st.selectbox("Domain", list(DOMAINS.keys()))
 with c2: tone = st.selectbox("Tone", ["Professional", "Neutral", "Persuasive", "Instructional"])
 with c3: depth = st.selectbox("Depth", ["Concise", "Standard", "Detailed", "Exhaustive"], index=1)
 
-# Unified input
 st.markdown("**Your request**")
 user_text = st.text_area("", placeholder="Describe what you want the AI to produce...", height=140, label_visibility="collapsed")
 
@@ -137,7 +118,6 @@ if st.session_state.get("show_speak"):
             )
             st.session_state["voice_text"] = result
             st.text_area("Transcribed (editable)", value=result, height=80)
-        st.caption("Will translate to English before optimization if needed.")
 
 if st.button("GENERATE PROMPT", key="gen"):
     final = user_text.strip() or st.session_state.get("file_text", "").strip()
@@ -153,9 +133,19 @@ if st.button("GENERATE PROMPT", key="gen"):
 
     st.markdown("### Your prompt")
     st.code(prompt, language="markdown")
+    st.caption("Click the copy icon at the top right of the code block to copy the prompt.")
 
-    st.markdown("**Open with this prompt** (copied automatically)")
-    st.caption("Click a tool icon. The prompt is copied to your clipboard and the tool opens. Paste with Ctrl+V.")
+    st.markdown("### Open in your AI tool")
+    st.caption("Copy the prompt above, then click any tool below to open it and paste with Ctrl+V.")
 
-    tool_html = '<div class="tool-row">' + "".join(copy_and_open_button(prompt, t) for t in AI_TOOLS) + '</div>'
-    components.html(tool_html, height=120)
+    # Render icons and link buttons natively, no iframe.
+    for row_start in range(0, len(AI_TOOLS), 4):
+        row_tools = AI_TOOLS[row_start:row_start + 4]
+        cols = st.columns(len(row_tools))
+        for i, tool in enumerate(row_tools):
+            with cols[i]:
+                try:
+                    st.image(tool["icon"], width=40)
+                except Exception:
+                    st.markdown("**" + tool["name"][0] + "**")
+                st.link_button(tool["name"], tool["url"], use_container_width=True)
