@@ -5,7 +5,8 @@ from groq import Groq
 # ============================================================
 # Promptline Guru
 # Plain language in, professional AI instructions out.
-# Groq API only. Voice input via Groq Whisper.
+# Upload, Ugandan voice, multi-AI routing.
+# Groq API only. No emojis. MTN Pulse styling.
 # ============================================================
 
 if "GROQ_API_KEY" in st.secrets:
@@ -38,107 +39,192 @@ st.markdown("""
     .stAlert { border-radius: 12px; }
     .stCodeBlock pre { background-color: #1A1A1A !important; color: #FFCC00 !important; border-radius: 12px; }
     .plg-tag { display: inline-block; background: #FFCC00; color: #000000; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.7rem; border-radius: 20px; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .ai-btn { display: inline-block; background: #F5F5F5; color: #000000; font-weight: 700; font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 20px; margin: 0.25rem 0.4rem 0.25rem 0; border: 1px solid #DDDDDD; text-decoration: none; }
+    .ai-btn:hover { background: #FFCC00; border-color: #FFCC00; color: #000000; }
 </style>
 """, unsafe_allow_html=True)
 
 DOMAINS = {
     "General": "You are optimizing prompts for general-purpose professional work.",
-    "Software Engineering": "You are optimizing prompts for software engineering tasks: code, architecture, debugging, technical documentation. Emphasize correctness, edge cases, and runnable output.",
-    "Business and Strategy": "You are optimizing prompts for business strategy, planning, and operations. Emphasize measurable objectives, stakeholders, and actionable deliverables.",
-    "Education": "You are optimizing prompts for teaching and learning. Emphasize clarity, scaffolding, learning outcomes, and assessment.",
-    "Health": "You are optimizing prompts for health communication and clinical documentation. Emphasize accuracy, safety, and referral to qualified professionals.",
-    "Agriculture": "You are optimizing prompts for agricultural extension and agribusiness. Emphasize practical, field-ready guidance and local context.",
-    "Government and Public Service": "You are optimizing prompts for public service delivery and policy communication. Emphasize clarity, inclusivity, and accountability.",
-    "Creative and Media": "You are optimizing prompts for creative writing, media production, and content strategy. Emphasize audience, tone, and format.",
-    "Research and Academia": "You are optimizing prompts for research design, literature, and academic writing. Emphasize rigor, citation practice, and methodology.",
+    "Software Engineering": "You are optimizing prompts for software engineering tasks. Emphasize correctness, edge cases, and runnable output.",
+    "Business and Strategy": "You are optimizing prompts for business strategy and operations. Emphasize measurable objectives and actionable deliverables.",
+    "Education": "You are optimizing prompts for teaching and learning. Emphasize clarity, scaffolding, and assessment.",
+    "Health": "You are optimizing prompts for health communication. Emphasize accuracy, safety, and referral to professionals.",
+    "Agriculture": "You are optimizing prompts for agricultural extension. Emphasize practical, field-ready guidance.",
+    "Government and Public Service": "You are optimizing prompts for public service delivery. Emphasize clarity, inclusivity, and accountability.",
+    "Creative and Media": "You are optimizing prompts for creative work. Emphasize audience, tone, and format.",
+    "Research and Academia": "You are optimizing prompts for research. Emphasize rigor and methodology.",
 }
 
-META_SYSTEM = """You are a senior prompt engineer. Your job is to convert a user's rough request into a single, production-ready prompt that any capable AI model can follow to deliver high-quality, professional output.
+AI_TOOLS = [
+    {"name": "ChatGPT", "url": "https://chat.openai.com", "color": "#10A37F"},
+    {"name": "Claude", "url": "https://claude.ai", "color": "#D97757"},
+    {"name": "Gemini", "url": "https://gemini.google.com", "color": "#4285F4"},
+    {"name": "Grok", "url": "https://grok.com", "color": "#000000"},
+    {"name": "DeepSeek", "url": "https://chat.deepseek.com", "color": "#4D6BFE"},
+    {"name": "Copilot", "url": "https://copilot.microsoft.com", "color": "#0078D4"},
+    {"name": "Perplexity", "url": "https://perplexity.ai", "color": "#20808D"},
+]
+
+META_SYSTEM = """You are a senior prompt engineer. Convert a user's rough request into a single, production-ready prompt.
 
 Strict rules:
-- Output ONLY the optimized prompt. No preamble, no commentary, no explanation of what you did.
-- The prompt you output must be self-contained and directly usable.
-- Structure the output prompt with these clearly labeled sections in this order:
-  1. ROLE
-  2. OBJECTIVE
-  3. CONTEXT AND CONSTRAINTS
-  4. INPUTS
-  5. PROCESS
-  6. OUTPUT FORMAT
-  7. QUALITY BAR
-- In QUALITY BAR, state concrete, checkable criteria the output must satisfy.
-- In OUTPUT FORMAT, be explicit about structure so the result is consistent and review-ready.
-- Do NOT answer the user's underlying request. Do NOT produce the deliverable. Only produce the prompt.
-- If the user's request is ambiguous, resolve it with reasonable defaults and state those defaults inside CONTEXT AND CONSTRAINTS. Do not ask clarifying questions."""
+- Output ONLY the optimized prompt. No preamble.
+- Structure: ROLE, OBJECTIVE, CONTEXT AND CONSTRAINTS, INPUTS, PROCESS, OUTPUT FORMAT, QUALITY BAR.
+- QUALITY BAR must state concrete, checkable criteria.
+- Do NOT answer the user's request. Only produce the prompt.
+- Resolve ambiguity with stated defaults. Do not ask questions."""
 
 def optimize_prompt(user_input: str, domain: str, tone: str, depth: str) -> str:
-    system = META_SYSTEM + "\n\nDomain guidance: " + DOMAINS.get(domain, DOMAINS["General"])
+    system = META_SYSTEM + "\n\nDomain: " + DOMAINS.get(domain, DOMAINS["General"])
     user_msg = (
-        "Domain: " + domain + "\n"
-        "Preferred tone: " + tone + "\n"
-        "Preferred depth: " + depth + "\n\n"
-        "Rough request from the user:\n" + user_input
+        "Domain: " + domain + "\nTone: " + tone + "\nDepth: " + depth + "\n\n"
+        "Rough request:\n" + user_input
     )
     resp = client.chat.completions.create(
         model="openai/gpt-oss-120b",
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user_msg},
-        ],
+        messages=[{"role": "system", "content": system}, {"role": "user", "content": user_msg}],
         temperature=0.4,
         max_tokens=1500,
     )
     return resp.choices[0].message.content
 
-def transcribe(audio_bytes, filename):
-    transcription = client.audio.transcriptions.create(
+def transcribe_audio(audio_bytes, filename):
+    """Transcribe in original language. Auto-detect for unsupported Ugandan languages."""
+    result = client.audio.transcriptions.create(
         file=(filename, audio_bytes),
-        model="whisper-large-v3-turbo",
+        model="whisper-large-v3",
         response_format="text",
     )
-    return transcription
+    return result
+
+def translate_to_english(text: str) -> str:
+    """Groq LLM translates any text to English. Used for Ugandan languages not directly supported."""
+    resp = client.chat.completions.create(
+        model="openai/gpt-oss-120b",
+        messages=[
+            {"role": "system", "content": "Translate the following text to English. Output only the translation, no explanation. If already English, output unchanged."},
+            {"role": "user", "content": text},
+        ],
+        temperature=0.1,
+        max_tokens=800,
+    )
+    return resp.choices[0].message.content.strip()
+
+def extract_file_text(uploaded_file) -> str:
+    """Extract text from uploaded txt, md, csv, or pdf."""
+    name = uploaded_file.name.lower()
+    data = uploaded_file.getvalue()
+    if name.endswith(".pdf"):
+        try:
+            import fitz
+            doc = fitz.open(stream=data, filetype="pdf")
+            text = "\n".join(page.get_text() for page in doc)
+            doc.close()
+            return text
+        except ImportError:
+            return "[PDF support requires PyMuPDF. Install with: pip install PyMuPDF]"
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError:
+        return "[Could not decode file as text]"
 
 st.markdown('<span class="plg-tag">PROMPTLINE GURU</span>', unsafe_allow_html=True)
 st.title("PROMPT ENGINEER")
-st.caption("Plain language in, professional AI instructions out. Quality prompts for any domain, without learning prompt engineering.")
+st.caption("Plain language in, professional AI instructions out. Text, voice, or file upload. Any domain.")
 
-left, right = st.columns([3, 1])
+# ---------- AI Tool Selector (visual, no trademarked icons) ----------
+st.markdown("**Where will you paste this prompt?**")
+cols = st.columns(len(AI_TOOLS))
+for i, tool in enumerate(AI_TOOLS):
+    with cols[i]:
+        st.markdown(
+            '<a href="' + tool["url"] + '" target="_blank" class="ai-btn" style="border-left: 4px solid ' + tool["color"] + ';">' + tool["name"] + '</a>',
+            unsafe_allow_html=True,
+        )
+st.caption("Click a tool to open it. Generate your prompt below, then paste it into any tool.")
 
+# ---------- Controls ----------
+right = st.container()
 with right:
-    domain = st.selectbox("Domain", list(DOMAINS.keys()), index=0)
-    tone = st.selectbox("Tone", ["Professional", "Neutral", "Persuasive", "Instructional", "Conversational"], index=0)
-    depth = st.selectbox("Depth", ["Concise", "Standard", "Detailed", "Exhaustive"], index=1)
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        domain = st.selectbox("Domain", list(DOMAINS.keys()), index=0)
+    with c2:
+        tone = st.selectbox("Tone", ["Professional", "Neutral", "Persuasive", "Instructional", "Conversational"], index=0)
+    with c3:
+        depth = st.selectbox("Depth", ["Concise", "Standard", "Detailed", "Exhaustive"], index=1)
 
-with left:
-    st.subheader("Describe what you want the AI to produce")
+# ---------- Input Tabs ----------
+input_tab1, input_tab2, input_tab3 = st.tabs(["TYPE", "UPLOAD FILE", "SPEAK"])
+
+with input_tab1:
     user_input = st.text_area(
-        "Your rough request",
+        "Describe what you want the AI to produce",
         placeholder="Example: write a proposal for a school computer lab in a rural district, budget-friendly, with a timeline and equipment list",
-        height=180,
+        height=160,
     )
 
-    st.markdown("**Or speak your request**")
+with input_tab2:
+    uploaded = st.file_uploader("Upload a text, markdown, CSV, or PDF file", type=["txt", "md", "csv", "pdf"])
+    if uploaded is not None:
+        with st.spinner("Extracting text..."):
+            file_text = extract_file_text(uploaded)
+        st.session_state["file_text"] = file_text
+        st.text_area("Extracted content (edit if needed)", value=file_text[:4000], height=200)
+        st.caption("The full extracted text will be used if you generate from this tab.")
+
+with input_tab3:
+    st.markdown("**Speak in English, Luganda, Swahili, or any supported language.**")
+    st.caption("Groq Whisper supports 99+ languages. For smaller Ugandan languages not on the supported list, auto-detection may produce lower accuracy. Text will be translated to English before optimization.")
     audio_value = st.audio_input("Record your request")
     if audio_value is not None:
         with st.spinner("Transcribing..."):
             try:
-                text = transcribe(audio_value.getvalue(), "request.wav")
-                st.session_state["voice_text"] = text
-                st.success("Transcribed. Review below and edit if needed.")
-                st.text_area("Transcription", value=text, height=120, key="voice_review")
+                transcribed = transcribe_audio(audio_value.getvalue(), "request.wav")
+                st.session_state["voice_raw"] = transcribed
+                st.success("Transcribed. Review and edit below.")
+                edited = st.text_area("Original transcription (edit if needed)", value=transcribed, height=100, key="voice_edit")
+                st.session_state["voice_text"] = edited
             except Exception as e:
                 st.error("Transcription failed: " + str(e))
 
-    if st.button("GENERATE PROMPT", key="gen"):
-        final_input = st.session_state.get("voice_text", "").strip() or user_input.strip()
-        if not final_input:
-            st.warning("Please type or record a request first.")
-        else:
-            with st.spinner("Building your prompt..."):
-                try:
-                    result = optimize_prompt(final_input, domain, tone, depth)
-                    st.markdown("### Your optimized prompt")
-                    st.code(result, language="markdown")
-                    st.caption("Copy this prompt into any AI model. It is self-contained and ready to use.")
-                except Exception as e:
-                    st.error("Generation failed: " + str(e))
+# ---------- Generate ----------
+if st.button("GENERATE PROMPT", key="gen"):
+    final_input = ""
+    source = ""
+
+    typed = user_input.strip() if user_input else ""
+    file_ready = st.session_state.get("file_text", "").strip()
+    voice_ready = st.session_state.get("voice_text", "").strip()
+
+    if typed:
+        final_input = typed
+        source = "typed"
+    elif file_ready:
+        final_input = file_ready
+        source = "file"
+    elif voice_ready:
+        source = "voice"
+        with st.spinner("Translating to English..."):
+            try:
+                final_input = translate_to_english(voice_ready)
+                st.caption("Translated input: " + final_input[:300])
+            except Exception:
+                final_input = voice_ready
+    else:
+        st.warning("Please type, upload, or speak a request first.")
+        st.stop()
+
+    with st.spinner("Building your prompt..."):
+        try:
+            result = optimize_prompt(final_input, domain, tone, depth)
+            st.markdown("### Your optimized prompt")
+            st.code(result, language="markdown")
+            st.caption("Copy this prompt into ChatGPT, Claude, Gemini, Grok, DeepSeek, Copilot, or any AI tool. It is self-contained.")
+        except Exception as e:
+            st.error("Generation failed: " + str(e))
+
+# ---------- Footer ----------
+st.markdown("---")
+st.caption("Promptline Guru. Built on Groq. Voice via Whisper. No data stored.")
