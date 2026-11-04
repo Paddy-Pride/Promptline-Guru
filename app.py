@@ -427,44 +427,55 @@ st.markdown("""
     /* AI TOOL CARDS */
 
     .ai-card {
-        display: flex;
-        flex-direction: column;
+        display: flex !important;
+        flex-direction: column !important;
 
-        align-items: center;
-        justify-content: center;
+        align-items: center !important;
+        justify-content: center !important;
 
-        background-color: rgba(255, 255, 255, 0.97);
+        background-color: rgba(255, 255, 255, 0.97) !important;
 
-        border: 2px solid #E0E0E0;
-        border-radius: 14px;
+        border: 2px solid #E0E0E0 !important;
+        border-radius: 14px !important;
 
-        padding: 14px 8px;
+        padding: 14px 8px !important;
 
         text-decoration: none !important;
         color: #000 !important;
 
         transition: all 0.2s ease;
 
-        min-height: 105px;
-        width: 100%;
+        min-height: 105px !important;
+        width: 100% !important;
 
-        margin-bottom: 8px;
-        box-sizing: border-box;
+        margin-bottom: 8px !important;
+        box-sizing: border-box !important;
     }
 
     .ai-card:hover {
-        border-color: #FFD500;
+        border-color: #FFD500 !important;
         transform: translateY(-3px);
 
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.09);
     }
 
     .ai-logo {
+        width: 40px !important;
+        height: 40px !important;
+
+        object-fit: contain !important;
+        display: block !important;
+
+        margin: 0 !important;
+    }
+
+    .ai-icon-slot {
         width: 40px;
         height: 40px;
 
-        object-fit: contain;
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         margin-bottom: 9px;
     }
@@ -481,7 +492,7 @@ st.markdown("""
         font-weight: 900;
         font-size: 1.1rem;
 
-        margin-bottom: 9px;
+        margin: 0;
     }
 
     .ai-name {
@@ -489,7 +500,7 @@ st.markdown("""
         font-size: 0.75rem;
 
         text-align: center;
-        margin: 0;
+        margin: 0 !important;
 
         color: #222;
     }
@@ -969,41 +980,19 @@ if st.button(
 
                 fallback_id = f"ai-fallback-{i}"
 
-                # IMPORTANT:
-                # Build the HTML as a single contiguous string
-                # (no leading whitespace / newlines) so that
-                # Streamlit's markdown renderer does NOT
-                # interpret it as an indented code block.
                 card_html = (
-                    f'<a href="{tool_url}" '
-                    f'target="_blank" '
-                    f'rel="noopener noreferrer" '
-                    f'class="ai-card" '
-                    f'style="display:flex;flex-direction:column;'
-                    f'align-items:center;justify-content:center;'
-                    f'background-color:rgba(255,255,255,0.97);'
-                    f'border:2px solid #E0E0E0;border-radius:14px;'
-                    f'padding:14px 8px;text-decoration:none !important;'
-                    f'color:#000 !important;min-height:105px;'
-                    f'width:100%;margin-bottom:8px;box-sizing:border-box;">'
-                    f'<img src="{tool_icon}" '
-                    f'alt="{tool_name} logo" '
+                    f'<a href="{tool_url}" target="_blank" '
+                    f'rel="noopener noreferrer" class="ai-card">'
+                    f'<div class="ai-icon-slot">'
+                    f'<img src="{tool_icon}" alt="{tool_name} logo" '
                     f'class="ai-logo" '
-                    f'style="width:40px;height:40px;object-fit:contain;'
-                    f'display:block;margin-bottom:9px;" '
                     f'onerror="this.style.display=\'none\';'
                     f'this.nextElementSibling.style.display=\'flex\';" />'
                     f'<div id="{fallback_id}" class="ai-fallback" '
                     f'style="display:none;background-color:{tool_color};'
-                    f'color:#ffffff;width:40px;height:40px;'
-                    f'border-radius:50%;align-items:center;'
-                    f'justify-content:center;font-weight:900;'
-                    f'font-size:1.1rem;margin-bottom:9px;">'
-                    f'{tool_initial}</div>'
-                    f'<p class="ai-name" '
-                    f'style="font-weight:800;font-size:0.75rem;'
-                    f'text-align:center;margin:0;color:#222;">'
-                    f'{tool_name}</p>'
+                    f'color:#ffffff;">{tool_initial}</div>'
+                    f'</div>'
+                    f'<p class="ai-name">{tool_name}</p>'
                     f'</a>'
                 )
 
