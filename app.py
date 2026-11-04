@@ -12,9 +12,16 @@ st.set_page_config(page_title="Promptline Guru", page_icon=None, layout="wide")
 
 st.markdown("""
 <style>
-    /* Global Reset */
+    /* Global Reset & Centering */
     html, body, [class*="css"] { font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif; }
-    .block-container { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+    
+    /* Center the container perfectly */
+    .block-container { 
+        padding-top: 4vh !important; 
+        padding-bottom: 4vh !important; 
+        max-width: 900px !important;
+        margin: 0 auto !important;
+    }
     
     /* Energetic Runner Background */
     .stApp { 
@@ -24,93 +31,85 @@ st.markdown("""
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
-    /* Glassmorphism Container - Pushed down */
+    /* Sleeker Glassmorphism Container */
     .block-container > div:first-child { 
-        padding: 2.5rem 2.5rem 2rem 2.5rem; 
-        max-width: 900px; 
-        background: rgba(255, 255, 255, 0.75);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-radius: 28px; 
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        margin: 3rem auto 2rem auto; /* Pushed down */
+        padding: 2rem 2.5rem; 
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 24px; 
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        margin: 0 auto;
+        width: 100%;
     }
 
     /* Sidebar */
     [data-testid="stSidebar"] { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); }
 
-    /* App Name */
+    /* App Name Tag */
     .plg-tag { 
         display: inline-block; background: #FFD500; color: #000; 
-        font-weight: 900; font-size: 0.85rem; padding: 0.35rem 1rem; 
-        border-radius: 20px; letter-spacing: 0.1em; margin-bottom: 0.8rem; 
+        font-weight: 900; font-size: 0.8rem; padding: 0.3rem 1rem; 
+        border-radius: 20px; letter-spacing: 0.1em; margin-bottom: 0.6rem; 
         border: 2px solid #000; text-transform: uppercase;
     }
 
     /* Typography */
-    h1 { font-size: 2.4rem; font-weight: 900; color: #111; line-height: 1.1; margin-bottom: 0; margin-top: 0; text-transform: uppercase; }
+    h1 { font-size: 2.2rem; font-weight: 900; color: #111; line-height: 1.1; margin-bottom: 0; margin-top: 0; text-transform: uppercase; }
     h1 .highlight { color: #FF9900; }
-    .subtitle { color: #333; font-size: 1rem; margin-top: 0.4rem; margin-bottom: 1.2rem; font-weight: 700; }
+    .subtitle { color: #333; font-size: 0.95rem; margin-top: 0.3rem; margin-bottom: 1rem; font-weight: 700; }
 
-    /* Typewriter */
+    /* Typewriter Box */
     .typewriter-container {
-        background: rgba(255, 255, 255, 0.9); border: 2px solid #FFD500;
-        border-radius: 10px; padding: 6px 15px; margin-bottom: 1.2rem;
-        display: inline-block; min-width: 280px;
+        background: rgba(255, 255, 255, 0.95); border: 2px solid #FFD500;
+        border-radius: 10px; padding: 5px 12px; margin-bottom: 1rem;
+        display: inline-block; min-width: 250px;
     }
-    .typewriter-text { color: #000; font-weight: 800; font-size: 0.85rem; font-family: monospace; text-transform: uppercase; margin: 0; }
+    .typewriter-text { color: #000; font-weight: 800; font-size: 0.8rem; font-family: monospace; text-transform: uppercase; margin: 0; }
 
-    /* --- ENLARGED CHAT BOX & VOICE BOX --- */
-    div[data-testid="stHorizontalBlock"] > div:nth-child(1) {
-        padding-right: 8px; 
-    }
-    div[data-testid="stHorizontalBlock"] > div:nth-child(2) {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+    /* --- WHATSAPP CHAT BOX & VOICE BOX --- */
+    div[data-testid="stHorizontalBlock"] > div:nth-child(1) { padding-right: 10px; }
+    div[data-testid="stHorizontalBlock"] > div:nth-child(2) { display: flex; align-items: center; justify-content: center; }
 
     /* Chat Input - Larger */
     [data-testid="stChatInput"] {
         background-color: rgba(255, 255, 255, 0.95) !important;
         border: 2px solid #FFD500 !important;
         border-radius: 30px !important;
-        padding: 8px 15px !important;
-        min-height: 60px !important; /* Larger height */
+        padding: 6px 15px !important;
+        min-height: 55px !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
-    [data-testid="stChatInput"] textarea {
-        font-size: 1.05rem !important;
-    }
+    [data-testid="stChatInput"] textarea { font-size: 1rem !important; }
     [data-testid="stChatInput"]:focus-within { border-color: #FF9900 !important; }
     
-    /* Audio Input - Larger and perfectly round */
-    [data-testid="stAudioInput"] {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+    /* Audio Input - Perfectly Round & Large */
+    [data-testid="stAudioInput"] { margin: 0 !important; padding: 0 !important; }
     [data-testid="stAudioInput"] button {
         border-radius: 50% !important;
         background-color: #FFD500 !important;
         border: 2px solid #000 !important;
-        width: 60px !important;  /* Matches chat box height */
-        height: 60px !important; /* Matches chat box height */
+        width: 55px !important;  
+        height: 55px !important; 
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
     }
     [data-testid="stAudioInput"] button:hover { background-color: #FF9900 !important; color: #fff !important; }
-    [data-testid="stAudioInput"] button svg { width: 28px !important; height: 28px !important; } /* Larger icon */
+    [data-testid="stAudioInput"] button svg { width: 26px !important; height: 26px !important; }
 
     /* Generate Button */
     .stButton > button { 
         background-color: #FFD500; color: #000; border: 2px solid #000; 
         border-radius: 30px; font-weight: 900; text-transform: uppercase;
-        padding: 0.6rem 1.5rem; font-size: 1rem; width: 100%; margin-top: 1rem;
+        padding: 0.6rem 1.5rem; font-size: 1rem; width: 100%; margin-top: 0.8rem;
         height: 50px;
     }
     .stButton > button:hover { background-color: #FF9900; color: #FFF; }
@@ -123,20 +122,20 @@ st.markdown("""
         transition: all 0.2s; height: 100%; margin-bottom: 8px;
     }
     .ai-card:hover { border-color: #FFD500; transform: translateY(-2px); }
-    .ai-logo { width: 28px; height: 28px; margin-bottom: 6px; object-fit: contain; }
+    .ai-logo { width: 26px; height: 26px; margin-bottom: 6px; object-fit: contain; }
     .ai-name { font-weight: 800; font-size: 0.7rem; text-align: center; margin: 0; }
     .ai-fallback { 
-        width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        font-weight: 900; font-size: 1rem; color: #FFF; margin-bottom: 6px;
+        width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-weight: 900; font-size: 0.95rem; color: #FFF; margin-bottom: 6px;
     }
 
     /* Output Code Block */
     .stCodeBlock pre { 
         background: rgba(20, 20, 20, 0.95) !important; color: #FFD500 !important; 
-        border-radius: 12px; border: 2px solid rgba(255, 213, 0, 0.5); font-size: 0.9rem;
+        border-radius: 12px; border: 2px solid rgba(255, 213, 0, 0.5); font-size: 0.85rem;
         padding: 12px !important;
     }
-    hr { border-color: rgba(0,0,0,0.1); margin: 1rem 0; }
+    hr { border-color: rgba(0,0,0,0.1); margin: 0.8rem 0; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -235,7 +234,7 @@ components.html("""
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
 # --- ENLARGED WHATSAPP CHAT BOX LAYOUT ---
-col1, col2 = st.columns([7, 1])
+col1, col2 = st.columns([8, 1])
 
 with col1:
     chat_val = st.chat_input("Type your request here...", accept_file=True, file_type=["txt", "md", "csv", "pdf"])
