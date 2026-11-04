@@ -18,10 +18,12 @@ st.markdown("""
     .stButton > button:hover { background-color: #000; color: #FFCC00; }
     .stLinkButton > a { background-color: #FFF9E0; color: #000; border: 1px solid #E0E0E0; border-radius: 12px; padding: 0.5rem 1rem; font-weight: 700; font-size: 0.85rem; text-decoration: none; width: 100%; text-align: center; }
     .stLinkButton > a:hover { background-color: #FFCC00; border-color: #FFCC00; }
-    .stTextArea textarea { border-radius: 12px; border: 1px solid #CCC; }
-    .stTextArea textarea:focus { border-color: #FFCC00; box-shadow: 0 0 0 2px rgba(255,204,0,0.3); }
     .stCodeBlock pre { background: #1A1A1A !important; color: #FFCC00 !important; border-radius: 12px; }
     .plg-tag { display: inline-block; background: #FFCC00; color: #000; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.7rem; border-radius: 20px; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    /* Chat bar container: visually groups text input + audio */
+    .chatbar-wrap { background: #FFFFFF; border: 1px solid #E0E0E0; border-radius: 16px; padding: 1rem 1rem 0.5rem 1rem; margin-top: 0.5rem; }
+    .chatbar-wrap .stChatInput { margin-bottom: 0.5rem; }
+    .chatbar-wrap .stAudioInput { margin-bottom: 0; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -35,14 +37,15 @@ DOMAINS = {
     "Government": "Public service delivery. Emphasize clarity and accountability.",
 }
 
+# Lobe Icons static CDN: stable AI brand icons, directly loadable by st.image[citation:1][citation:2]
 AI_TOOLS = [
-    {"name": "ChatGPT", "url": "https://chat.openai.com", "icon": "https://chat.openai.com/favicon.ico"},
-    {"name": "Claude", "url": "https://claude.ai", "icon": "https://claude.ai/favicon.ico"},
-    {"name": "Gemini", "url": "https://gemini.google.com", "icon": "https://www.gstatic.com/devrel-devsite/prod/v5e941f15ff6710591bee254538202655020220785b40a3f4d932e94adb9f6037/googledevai/images/favicon-new.png"},
-    {"name": "Grok", "url": "https://grok.com", "icon": "https://grok.com/images/favicon.svg"},
-    {"name": "DeepSeek", "url": "https://chat.deepseek.com", "icon": "https://www.deepseek.com/favicon.ico"},
-    {"name": "Copilot", "url": "https://copilot.microsoft.com", "icon": "https://copilot.microsoft.com/favicon.ico"},
-    {"name": "Perplexity", "url": "https://www.perplexity.ai", "icon": "https://www.perplexity.ai/favicon.ico"},
+    {"name": "ChatGPT", "url": "https://chat.openai.com", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/openai.webp"},
+    {"name": "Claude", "url": "https://claude.ai", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/claude.webp"},
+    {"name": "Gemini", "url": "https://gemini.google.com", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/gemini.webp"},
+    {"name": "Grok", "url": "https://grok.com", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/grok.webp"},
+    {"name": "DeepSeek", "url": "https://chat.deepseek.com", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/deepseek.webp"},
+    {"name": "Copilot", "url": "https://copilot.microsoft.com", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/copilot.webp"},
+    {"name": "Perplexity", "url": "https://www.perplexity.ai", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/perplexity.webp"},
 ]
 
 META_SYSTEM = """You are a senior prompt engineer. Convert a rough request into a production-ready prompt.
@@ -85,47 +88,63 @@ def extract_file_text(f):
 
 st.markdown('<span class="plg-tag">PROMPTLINE GURU</span>', unsafe_allow_html=True)
 st.title("PROMPT ENGINEER")
-st.caption("Write, upload, or speak. Get a professional prompt. Pick a tool to open and paste.")
+st.caption("Type, upload, or speak. Get a professional prompt. Pick a tool to open and paste.")
 
 c1, c2, c3 = st.columns(3)
 with c1: domain = st.selectbox("Domain", list(DOMAINS.keys()))
 with c2: tone = st.selectbox("Tone", ["Professional", "Neutral", "Persuasive", "Instructional"])
 with c3: depth = st.selectbox("Depth", ["Concise", "Standard", "Detailed", "Exhaustive"], index=1)
 
-st.markdown("**Your request**")
-user_text = st.text_area("", placeholder="Describe what you want the AI to produce...", height=140, label_visibility="collapsed")
+# ========== Unified Chat Bar ==========
+# Use st.chat_input for text + file attachment, st.audio_input for voice.
+# Wrap in a styled container so they read as one input area.
+st.markdown('<div class="chatbar-wrap">', unsafe_allow_html=True)
 
-btn_col1, btn_col2, _ = st.columns([1, 1, 3])
-with btn_col1:
-    if st.button("Upload file"):
-        st.session_state["show_upload"] = True
-with btn_col2:
-    if st.button("Speak"):
-        st.session_state["show_speak"] = True
+chat_result = st.chat_input(
+    "Describe what you want the AI to produce...",
+    accept_file=True,
+    file_type=["txt", "md", "csv", "pdf"],
+)
 
-if st.session_state.get("show_upload"):
-    f = st.file_uploader("Upload txt, md, csv, or pdf", type=["txt", "md", "csv", "pdf"])
-    if f:
-        st.session_state["file_text"] = extract_file_text(f)
-        st.text_area("Extracted (editable)", value=st.session_state["file_text"][:3000], height=120)
+audio_value = st.audio_input("Or speak your request")
 
-if st.session_state.get("show_speak"):
-    audio = st.audio_input("Record in English, Luganda, Swahili, or other")
-    if audio:
-        with st.spinner("Transcribing..."):
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Parse chat submission: text and/or file
+submitted_text = ""
+submitted_file_text = ""
+
+if chat_result:
+    if chat_result.text:
+        submitted_text = chat_result.text
+    if chat_result.files:
+        for f in chat_result.files:
+            submitted_file_text += extract_file_text(f)
+
+# Parse audio: transcribe if present, translate if needed
+voice_text = ""
+if audio_value is not None:
+    with st.spinner("Transcribing..."):
+        try:
             result = client.audio.transcriptions.create(
-                file=("req.wav", audio.getvalue()), model="whisper-large-v3", response_format="text"
+                file=("req.wav", audio_value.getvalue()),
+                model="whisper-large-v3",
+                response_format="text",
             )
-            st.session_state["voice_text"] = result
-            st.text_area("Transcribed (editable)", value=result, height=80)
+            voice_text = result
+            st.caption("Transcribed: " + voice_text[:120])
+        except Exception as e:
+            st.error("Transcription failed: " + str(e))
 
 if st.button("GENERATE PROMPT", key="gen"):
-    final = user_text.strip() or st.session_state.get("file_text", "").strip()
-    if not final and st.session_state.get("voice_text"):
+    final = submitted_text.strip() or submitted_file_text.strip()
+
+    if not final and voice_text:
         with st.spinner("Translating..."):
-            final = translate_to_english(st.session_state["voice_text"])
+            final = translate_to_english(voice_text)
+
     if not final:
-        st.warning("Provide a request first.")
+        st.warning("Provide a request first: type, upload a file, or record audio.")
         st.stop()
 
     with st.spinner("Building prompt..."):
@@ -138,7 +157,6 @@ if st.button("GENERATE PROMPT", key="gen"):
     st.markdown("### Open in your AI tool")
     st.caption("Copy the prompt above, then click any tool below to open it and paste with Ctrl+V.")
 
-    # Render icons and link buttons natively, no iframe.
     for row_start in range(0, len(AI_TOOLS), 4):
         row_tools = AI_TOOLS[row_start:row_start + 4]
         cols = st.columns(len(row_tools))
