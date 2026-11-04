@@ -11,23 +11,118 @@ st.set_page_config(page_title="Promptline Guru", page_icon=None, layout="wide")
 
 st.markdown("""
 <style>
+    /* Global Theme: Deep Teal / Dark Mode */
     html, body, [class*="css"] { font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif; }
-    .stApp { background-color: #FFFFFF; }
-    .block-container { padding-top: 2.5rem; max-width: 1000px; }
-    h1 { font-size: 2.2rem; font-weight: 900; color: #000; letter-spacing: -0.03em; margin-bottom: 0; }
-    .subtitle { color: #666; font-size: 0.95rem; margin-top: 0.3rem; margin-bottom: 1rem; }
-    .yellow-bar { height: 6px; background: #FFCC00; border-radius: 3px; margin: 0.6rem 0 1.2rem 0; width: 80px; }
-    .stButton > button { background: #FFCC00; color: #000; border: 3px solid #000; border-radius: 40px; font-weight: 800; padding: 0.7rem 2rem; font-size: 1rem; width: 100%; }
-    .stButton > button:hover { background: #000; color: #FFCC00; }
-    .stLinkButton > a { background: #FFF9E0; color: #000; border: 2px solid #E0E0E0; border-radius: 12px; padding: 0.5rem 0.8rem; font-weight: 800; font-size: 0.8rem; text-decoration: none; width: 100%; text-align: center; }
-    .stLinkButton > a:hover { background: #FFCC00; border-color: #000; }
-    .stTextArea textarea { border-radius: 14px; border: 2px solid #CCC; font-size: 1rem; }
-    .stTextArea textarea:focus { border-color: #FFCC00; box-shadow: 0 0 0 3px rgba(255,204,0,0.25); }
-    .stCodeBlock pre { background: #1A1A1A !important; color: #FFCC00 !important; border-radius: 14px; border: 2px solid #FFCC00; }
-    .plg-tag { display: inline-block; background: #FFCC00; color: #000; font-weight: 900; font-size: 0.7rem; padding: 0.2rem 0.8rem; border-radius: 20px; letter-spacing: 0.08em; margin-bottom: 0.4rem; border: 2px solid #000; }
-    .stAlert { border-radius: 12px; }
-    .input-card { background: #FFFDF5; border: 2px solid #E0E0E0; border-radius: 18px; padding: 1.2rem 1.2rem 0.6rem 1.2rem; margin-bottom: 1rem; }
-    .tool-section { border-top: 2px solid #F0F0F0; padding-top: 1rem; margin-top: 1rem; }
+    .stApp { background-color: #1E2F30; /* MTN Pulse Dark Teal */ }
+    
+    /* Main Layout Container */
+    .block-container { 
+        padding-top: 2rem; 
+        max-width: 900px; 
+        background-color: #111B1C; 
+        border-radius: 24px; 
+        padding-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        border: 1px solid #2A3E40;
+        margin-top: 2rem;
+    }
+
+    /* Typography: Heavy, Italicized, Punchy */
+    h1 { 
+        font-size: 3rem; 
+        font-weight: 900; 
+        font-style: italic;
+        color: #FFFFFF; 
+        letter-spacing: -0.04em; 
+        line-height: 1.05;
+        margin-bottom: 0;
+        text-transform: uppercase;
+    }
+    h1 .highlight { color: #FFD500; /* Electric Yellow */ }
+    .subtitle { color: #A0B0B0; font-size: 1rem; margin-top: 0.5rem; margin-bottom: 2rem; font-weight: 600; }
+    
+    /* Text Elements */
+    p, label, .stMarkdown { color: #E0E0E0 !important; }
+    .card-title { color: #FFD500; font-weight: 900; font-style: italic; font-size: 1.2rem; margin-bottom: 0.5rem; text-transform: uppercase;}
+
+    /* Input Fields */
+    .stTextArea textarea { 
+        background-color: #1A282A !important; 
+        border-radius: 16px; 
+        border: 2px solid #3A5052; 
+        color: #FFFFFF !important;
+        font-size: 1rem; 
+    }
+    .stTextArea textarea:focus { border-color: #FF9900; box-shadow: 0 0 0 3px rgba(255,153,0,0.2); }
+    
+    /* Dropdowns */
+    .stSelectbox > div > div { 
+        background-color: #1A282A !important; 
+        border: 2px solid #3A5052; 
+        border-radius: 12px; 
+        color: #FFFFFF !important;
+    }
+    
+    /* The Main Action Button */
+    .stButton > button { 
+        background-color: #FF9900; /* Vibrant Orange */
+        color: #FFFFFF; 
+        border: none; 
+        border-radius: 40px; 
+        font-weight: 900; 
+        font-style: italic;
+        text-transform: uppercase;
+        padding: 0.8rem 2rem; 
+        font-size: 1.2rem; 
+        width: 100%; 
+        transition: all 0.15s ease;
+        margin-top: 1rem;
+    }
+    .stButton > button:hover { 
+        background-color: #FFD500; /* Yellow on hover */
+        color: #111B1C; 
+        transform: scale(1.02);
+    }
+    
+    /* AI Tool Link Buttons */
+    .stLinkButton > a { 
+        background-color: #1A282A; 
+        color: #FFFFFF; 
+        border: 2px solid #3A5052; 
+        border-radius: 30px; 
+        padding: 0.5rem 0.8rem; 
+        font-weight: 700; 
+        font-size: 0.8rem; 
+        text-decoration: none; 
+        width: 100%; 
+        text-align: center; 
+        transition: all 0.15s;
+    }
+    .stLinkButton > a:hover { 
+        background-color: #FF9900; 
+        border-color: #FF9900; 
+        color: #FFFFFF;
+    }
+
+    /* Output Code Block */
+    .stCodeBlock pre { 
+        background: #000000 !important; 
+        color: #FFD500 !important; 
+        border-radius: 16px; 
+        border: 2px solid #FFD500;
+        font-size: 0.95rem;
+    }
+
+    /* Expandable Note (Audio / Upload) */
+    .stAlert { 
+        background-color: #1A282A; 
+        border-radius: 16px; 
+        border-left: 6px solid #FFD500; 
+        color: #FFFFFF;
+    }
+    
+    /* Subtle Dividers */
+    hr { border-color: #2A3E40; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -92,45 +187,31 @@ def extract_file_text(f):
     return data.decode("utf-8", errors="replace")
 
 # ========== UI ==========
-st.markdown('<span class="plg-tag">PROMPTLINE GURU</span>', unsafe_allow_html=True)
-st.markdown('<h1>Professional prompts, in one step.</h1>', unsafe_allow_html=True)
-st.markdown('<div class="yellow-bar"></div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Type, upload, or speak. Get a production-ready prompt. Open any AI and paste.</div>', unsafe_allow_html=True)
+st.markdown('<h1>Unleash the power of<br><span class="highlight">professional prompts</span></h1>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Type, upload, or speak. Let AI do the heavy lifting.</div>', unsafe_allow_html=True)
 
-# Main input card
-st.markdown('<div class="input-card">', unsafe_allow_html=True)
-
-st.markdown("**Your request**")
+st.markdown('<div class="card-title">What do you want to create?</div>', unsafe_allow_html=True)
 user_text = st.text_area(
     "Type your request",
-    placeholder="Example: write a proposal for a school computer lab in a rural district, budget-friendly, with a timeline and equipment list",
-    height=140,
+    placeholder="e.g., write a proposal for a school computer lab...",
+    height=120,
     label_visibility="collapsed",
 )
 
-# Upload + Speak side by side, always visible
+# Upload & Audio Grid
 col_up, col_au = st.columns(2)
 
 with col_up:
-    st.markdown("**Upload**")
-    uploaded = st.file_uploader(
-        "Choose txt, md, csv, or pdf",
-        type=["txt", "md", "csv", "pdf"],
-        label_visibility="collapsed",
-    )
+    st.markdown('<div class="card-title">Upload Context</div>', unsafe_allow_html=True)
+    uploaded = st.file_uploader("PDF or TXT", type=["txt", "md", "csv", "pdf"], label_visibility="collapsed")
     uploaded_text = ""
     if uploaded:
         uploaded_text = extract_file_text(uploaded)
-        st.caption("Loaded: " + uploaded.name)
+        st.caption("✅ Loaded: " + uploaded.name)
 
 with col_au:
-    st.markdown("**Speak**")
-    lang_name = st.selectbox(
-        "Audio language",
-        list(GROQ_LANGS.keys()),
-        index=0,
-        label_visibility="collapsed",
-    )
+    st.markdown('<div class="card-title">Speak</div>', unsafe_allow_html=True)
+    lang_name = st.selectbox("Audio language", list(GROQ_LANGS.keys()), index=0, label_visibility="collapsed")
     audio_value = st.audio_input("Record", label_visibility="collapsed")
     voice_text = ""
     if audio_value is not None:
@@ -142,40 +223,41 @@ with col_au:
                     language=GROQ_LANGS[lang_name],
                     response_format="text",
                 )
-                st.caption("Transcribed: " + voice_text[:100])
+                st.caption("✅ Transcribed: " + voice_text[:30] + "...")
             except Exception as e:
                 st.error("Transcription failed: " + str(e))
-    st.caption("Groq supports English, Swahili, French, Arabic, Portuguese, Spanish. For Ugandan languages such as Leb Lango, type instead.")
+    st.caption("Note: For Leb Lango, please type instead. Whisper does not support it directly.")
 
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("<hr>", unsafe_allow_html=True)
 
-# Compact controls row
-st.markdown("**Settings**")
+# Controls
 c1, c2, c3 = st.columns(3)
 with c1: domain = st.selectbox("Domain", list(DOMAINS.keys()))
 with c2: tone = st.selectbox("Tone", ["Professional", "Neutral", "Persuasive", "Instructional"])
 with c3: depth = st.selectbox("Depth", ["Concise", "Standard", "Detailed", "Exhaustive"], index=1)
 
+# Generate Button
 if st.button("GENERATE PROMPT", key="gen"):
     final = user_text.strip() or uploaded_text.strip()
     if not final and voice_text:
         with st.spinner("Translating..."):
             final = translate_to_english(voice_text)
     if not final:
-        st.warning("Type a request, upload a file, or record audio first.")
+        st.warning("Please provide a request first.")
         st.stop()
 
-    with st.spinner("Building prompt..."):
+    with st.spinner("Forging..."):
         prompt = optimize_prompt(final, domain, tone, depth)
 
-    st.markdown("### Your prompt")
+    st.markdown('<div class="card-title" style="margin-top: 2rem;">Your Custom Prompt</div>', unsafe_allow_html=True)
     st.code(prompt, language="markdown")
-    st.caption("Use the copy icon at the top right of the code block to copy.")
+    st.caption("Copy the prompt above using the icon at the top right.")
 
-    st.markdown('<div class="tool-section">', unsafe_allow_html=True)
-    st.markdown("**Open in your AI tool**")
-    st.caption("Copy the prompt above, then click a tool below. Paste with Ctrl+V.")
+    st.markdown("<hr>", unsafe_allow_html=True)
+    st.markdown('<div class="card-title">Open & Paste</div>', unsafe_allow_html=True)
+    st.caption("Click a tool below to open it in a new tab. Paste the prompt to generate your result.")
 
+    # Render AI Tools in a single neat row
     for row_start in range(0, len(AI_TOOLS), 4):
         row_tools = AI_TOOLS[row_start:row_start + 4]
         cols = st.columns(len(row_tools))
@@ -183,4 +265,3 @@ if st.button("GENERATE PROMPT", key="gen"):
             with cols[i]:
                 st.image(tool["icon"], width=36)
                 st.link_button(tool["name"], tool["url"], use_container_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
