@@ -72,7 +72,12 @@ st.markdown("""
         background-size: cover; background-position: center; background-attachment: fixed;
     }
 
-    .block-container { padding-top: 5rem !important; padding-bottom: 15vh !important; max-width: 750px !important; margin: 0 auto !important; }
+    .block-container {
+        padding-top: 5rem !important;
+        padding-bottom: 15vh !important;
+        max-width: 750px !important;
+        margin: 0 auto !important;
+    }
 
     .block-container > div:first-child {
         padding: 2rem; background: rgba(255,255,255,0.7);
@@ -95,8 +100,8 @@ st.markdown("""
 
     .typewriter-container {
         background: rgba(255,255,255,0.95); border: 2px solid #FFD500;
-        border-radius: 8px; padding: 4px 10px; margin-bottom: 0.8rem;
-        display: block; width: 100%; box-sizing: border-box; min-height: 24px;
+        border-radius: 8px; padding: 6px 10px; margin-bottom: 0.8rem;
+        display: block; width: 100%; box-sizing: border-box; min-height: 32px;
     }
 
     .typewriter-text {
@@ -116,7 +121,6 @@ st.markdown("""
 
     [data-testid="stChatInput"]:focus-within { border-color: #FF9900 !important; }
 
-    /* Simplified audio button: only style the button itself, no nested div interference */
     [data-testid="stAudioInput"] button {
         width: 52px !important; height: 52px !important; border-radius: 50% !important;
         background: linear-gradient(145deg, #FFE45C, #FFD500) !important;
@@ -144,13 +148,21 @@ st.markdown("""
 
     .card-title { font-size: 1rem; font-weight: 900; color: #111; margin: 0.5rem 0; }
 
-    .ai-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 10px !important; width: 100% !important; margin: 0 !important; padding: 0 !important; box-sizing: border-box !important; }
+    .ai-grid {
+        display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 10px !important; width: 100% !important; margin: 0 !important;
+        padding: 0 !important; box-sizing: border-box !important;
+    }
 
     .ai-card {
-        display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important;
-        background-color: rgba(255,255,255,0.97) !important; border: 2px solid #E0E0E0 !important; border-radius: 14px !important;
-        padding: 14px 8px !important; text-decoration: none !important; color: #000 !important;
-        transition: all 0.2s ease; min-height: 105px !important; width: 100% !important; box-sizing: border-box !important; margin: 0 !important;
+        display: flex !important; flex-direction: column !important;
+        align-items: center !important; justify-content: center !important;
+        background-color: rgba(255,255,255,0.97) !important;
+        border: 2px solid #E0E0E0 !important; border-radius: 14px !important;
+        padding: 14px 8px !important; text-decoration: none !important;
+        color: #000 !important; transition: all 0.2s ease;
+        min-height: 105px !important; width: 100% !important;
+        box-sizing: border-box !important; margin: 0 !important;
     }
 
     .ai-card:hover { border-color: #FFD500 !important; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.09); }
@@ -172,22 +184,73 @@ st.markdown("""
     hr { border-color: rgba(0,0,0,0.1); margin: 0.8rem 0; }
 
     @media (max-width: 768px) {
-        .block-container { padding-top: 2rem !important; padding-bottom: 10vh !important; padding-left: 1rem !important; padding-right: 1rem !important; max-width: 100% !important; }
-        .block-container > div:first-child { padding: 1.2rem !important; border-radius: 16px !important; }
+        .block-container {
+            padding-top: 2rem !important;
+            padding-bottom: 10vh !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            max-width: 750px !important;
+            margin: 0 auto !important;
+        }
+
+        .block-container > div:first-child {
+            padding: 1.5rem !important;
+            border-radius: 18px !important;
+            margin: 0 auto !important;
+            width: 100% !important;
+        }
+
         h1 { font-size: 1.5rem !important; }
         .subtitle { font-size: 0.8rem !important; }
-        .typewriter-text { font-size: 0.65rem !important; }
+
+        .typewriter-container {
+            min-height: 48px !important;
+            padding: 8px 10px !important;
+        }
+
+        .typewriter-text {
+            font-size: 0.68rem !important;
+            line-height: 1.5 !important;
+        }
+
         .stButton > button { height: 44px !important; font-size: 0.85rem !important; }
         [data-testid="stChatInput"] { min-height: 48px !important; }
         .ai-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
     }
 
     @media (max-width: 480px) {
-        .block-container { padding-top: 1.5rem !important; padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
-        .block-container > div:first-child { padding: 1rem !important; border-radius: 14px !important; }
+        .block-container {
+            padding-top: 1.5rem !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            max-width: 750px !important;
+            margin: 0 auto !important;
+        }
+
+        .block-container > div:first-child {
+            padding: 1.2rem !important;
+            border-radius: 16px !important;
+            margin: 0 auto !important;
+            width: 100% !important;
+        }
+
         h1 { font-size: 1.3rem !important; }
-        .typewriter-text { font-size: 0.55rem !important; line-height: 1.3 !important; }
-        [data-testid="stAudioInput"] button { width: 44px !important; height: 44px !important; }
+
+        .typewriter-container {
+            min-height: 52px !important;
+            padding: 8px 10px !important;
+        }
+
+        .typewriter-text {
+            font-size: 0.62rem !important;
+            line-height: 1.5 !important;
+        }
+
+        [data-testid="stAudioInput"] button {
+            width: 44px !important;
+            height: 44px !important;
+        }
+
         .ai-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
         .ai-card { min-height: 90px !important; padding: 10px 6px !important; }
         .ai-logo, .ai-fallback { width: 32px !important; height: 32px !important; }
@@ -287,7 +350,7 @@ components.html("""
         setTimeout(ty, s);
     })();
 </script>
-""", height=40)
+""", height=48)
 
 
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
