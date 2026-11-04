@@ -53,7 +53,7 @@ st.markdown("""
         font-size: 0.85rem;
     }
 
-    /* Clear and Visible App Name Tag */
+    /* App Name Tag */
     .plg-tag { 
         display: inline-block; 
         background: #FFD500; 
@@ -101,67 +101,22 @@ st.markdown("""
         margin: 0;
     }
 
-    /* Custom Chat Box CSS */
-    .custom-chat-container {
-        display: flex;
-        align-items: center;
-        background-color: rgba(255, 255, 255, 0.95);
-        border: 2px solid #FFD500;
-        border-radius: 24px;
-        padding: 8px 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
-        margin-bottom: 1rem;
-    }
-    .custom-chat-container:focus-within {
-        border-color: #FF9900;
-        box-shadow: 0 0 0 3px rgba(255,153,0,0.2);
-    }
-    .custom-chat-input {
-        flex-grow: 1;
-        border: none;
-        background: transparent;
-        outline: none;
-        font-size: 1.05rem;
-        font-family: inherit;
-        color: #000;
-    }
-    .icon-btn {
-        background: transparent;
-        border: none;
-        cursor: pointer;
+    /* Input Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 1rem;
+        background-color: rgba(255,255,255,0.6);
         padding: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: background 0.2s;
+        border-radius: 15px;
     }
-    .icon-btn:hover { background: #f0f0f0; }
-    .send-btn {
-        background-color: #FFD500;
-        border: 2px solid #000;
-        color: #000;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        margin-left: 8px;
-        opacity: 0.5;
-        pointer-events: none;
-        transition: all 0.2s;
+    .stTabs [data-baseweb="tab"] {
+        border-radius: 10px;
+        font-weight: 800;
+        color: #333;
     }
-    .send-btn.active {
-        opacity: 1;
-        pointer-events: auto;
-        background-color: #FF9900;
-        color: #FFF;
-        border-color: #FF9900;
+    .stTabs [aria-selected="true"] {
+        background-color: #FFD500 !important;
+        color: #000 !important;
     }
-    .send-btn.active:hover { transform: scale(1.05); }
 
     /* Action Button */
     .stButton > button { 
@@ -184,24 +139,28 @@ st.markdown("""
         box-shadow: 0 5px 15px rgba(255,153,0,0.4);
     }
     
-    /* AI Tool Link Buttons */
-    .stLinkButton > a { 
-        background-color: rgba(255, 255, 255, 0.9); 
-        color: #000000; 
+    /* AI Tool Cards */
+    .ai-card { 
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        background-color: rgba(255, 255, 255, 0.95); 
         border: 2px solid #E0E0E0; 
-        border-radius: 30px; 
-        padding: 0.5rem 0.8rem; 
-        font-weight: 800; 
-        font-size: 0.8rem; 
+        border-radius: 16px; 
+        padding: 1rem 0.5rem; 
         text-decoration: none; 
-        width: 100%; 
-        text-align: center; 
-        transition: all 0.15s;
+        color: #000; 
+        transition: all 0.2s;
+        height: 100%;
     }
-    .stLinkButton > a:hover { 
-        background-color: #FFD500; 
-        border-color: #000000; 
-        color: #000000;
+    .ai-card:hover { 
+        border-color: #FFD500; 
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .ai-logo { width: 36px; height: 36px; margin-bottom: 8px; object-fit: contain; }
+    .ai-name { font-weight: 800; font-size: 0.8rem; text-align: center; margin: 0; }
+    .ai-fallback { 
+        width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-weight: 900; font-size: 1.2rem; color: #FFF; margin-bottom: 8px;
     }
 
     /* Output Code Block */
@@ -231,13 +190,13 @@ DOMAINS = {
 GROQ_LANGS = {"English": "en", "Swahili": "sw", "French": "fr", "Arabic": "ar", "Portuguese": "pt", "Spanish": "es"}
 
 AI_TOOLS = [
-    {"name": "ChatGPT", "url": "https://chat.openai.com", "icon": "https://chat.openai.com/favicon.ico"},
-    {"name": "Claude", "url": "https://claude.ai", "icon": "https://claude.ai/favicon.ico"},
-    {"name": "Gemini", "url": "https://gemini.google.com", "icon": "https://www.gstatic.com/lamda/images/gemini_favicon_f069958c85030f4b2761.ico"},
-    {"name": "Grok", "url": "https://grok.com", "icon": "https://grok.com/favicon.ico"},
-    {"name": "DeepSeek", "url": "https://chat.deepseek.com", "icon": "https://chat.deepseek.com/favicon.ico"},
-    {"name": "Copilot", "url": "https://copilot.microsoft.com", "icon": "https://copilot.microsoft.com/favicon.ico"},
-    {"name": "Perplexity", "url": "https://www.perplexity.ai", "icon": "https://www.perplexity.ai/favicon.ico"},
+    {"name": "ChatGPT", "url": "https://chat.openai.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/openai.png", "color": "#10A37F", "initial": "C"},
+    {"name": "Claude", "url": "https://claude.ai", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/claude.png", "color": "#D97757", "initial": "C"},
+    {"name": "Gemini", "url": "https://gemini.google.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/gemini.png", "color": "#4285F4", "initial": "G"},
+    {"name": "Grok", "url": "https://grok.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/grok.png", "color": "#000000", "initial": "G"},
+    {"name": "DeepSeek", "url": "https://chat.deepseek.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/deepseek.png", "color": "#4D6BFE", "initial": "D"},
+    {"name": "Copilot", "url": "https://copilot.microsoft.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/copilot.png", "color": "#0078D4", "initial": "C"},
+    {"name": "Perplexity", "url": "https://www.perplexity.ai", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/perplexity.png", "color": "#20808D", "initial": "P"},
 ]
 
 META_SYSTEM = """You are a senior prompt engineer. Convert a rough request into a production-ready prompt.
@@ -293,47 +252,27 @@ with st.sidebar:
 st.markdown('<div class="plg-tag">PROMPTLINE GURU</div>', unsafe_allow_html=True)
 st.markdown('<h1>Prompt Better.<br>Build <span class="highlight">Faster.</span></h1>', unsafe_allow_html=True)
 
-# Typewriter Animation Component (No Cursor)
+# Typewriter Animation Component
 typewriter_html = """
 <div class="typewriter-container">
     <p class="typewriter-text" id="typewriter"></p>
 </div>
-
 <script>
     const texts = [
         "Industry-Grade Production Prompt Engineering",
         "A Better Way to Work with Generative AI",
         "Save Time from Frustrating AI Outputs"
     ];
-    let count = 0;
-    let index = 0;
-    let currentText = "";
-    let letter = "";
-    let isDeleting = false;
-
+    let count = 0, index = 0, currentText = "", letter = "", isDeleting = false;
     (function type() {
-        if (count === texts.length) { count = 0; }
+        if (count === texts.length) count = 0;
         currentText = texts[count];
-        
-        if (isDeleting) {
-            letter = currentText.slice(0, --index);
-        } else {
-            letter = currentText.slice(0, ++index);
-        }
-
+        if (isDeleting) { letter = currentText.slice(0, --index); } 
+        else { letter = currentText.slice(0, ++index); }
         document.getElementById("typewriter").textContent = letter;
-
         let typeSpeed = isDeleting ? 20 : 60;
-
-        if (!isDeleting && letter.length === currentText.length) {
-            typeSpeed = 2000;
-            isDeleting = true;
-        } else if (isDeleting && letter.length === 0) {
-            isDeleting = false;
-            count++;
-            typeSpeed = 500;
-        }
-
+        if (!isDeleting && letter.length === currentText.length) { typeSpeed = 2000; isDeleting = true; } 
+        else if (isDeleting && letter.length === 0) { isDeleting = false; count++; typeSpeed = 500; }
         setTimeout(type, typeSpeed);
     })();
 </script>
@@ -342,103 +281,56 @@ components.html(typewriter_html, height=60)
 
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
-# Custom HTML Chat Box
-# This solves the disappearing text by using a custom JS bridge
-chat_input_html = """
-<div class="custom-chat-container">
-    <button class="icon-btn" title="Upload File">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-    </button>
-    <input type="text" class="custom-chat-input" id="chatInput" placeholder="Type your request here..." oninput="toggleBtn()" onkeypress="handleEnter(event)">
-    <button class="send-btn" id="sendBtn" onclick="sendText()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-    </button>
-</div>
+# Input Tabs for clear state management
+tab_type, tab_upload, tab_speak = st.tabs(["Type Request", "Upload File", "Speak Request"])
 
-<script>
-    function toggleBtn() {
-        const input = document.getElementById("chatInput");
-        const btn = document.getElementById("sendBtn");
-        if (input.value.trim().length > 0) {
-            btn.classList.add("active");
-        } else {
-            btn.classList.remove("active");
-        }
-    }
+final_input_text = ""
 
-    function handleEnter(e) {
-        if (e.key === "Enter") {
-            sendText();
-        }
-    }
+with tab_type:
+    typed_text = st.text_area("What do you want the AI to produce?", height=100, label_visibility="collapsed", placeholder="Type your request here...")
+    if typed_text.strip():
+        final_input_text = typed_text.strip()
+        st.session_state["saved_prompt"] = final_input_text
 
-    function sendText() {
-        const text = document.getElementById("chatInput").value;
-        if (text.trim() === "") return;
-        
-        // Send to Streamlit
-        window.parent.postMessage({isStreamlitMessage: true, type: "streamlit:setComponentValue", value: text}, "*");
-        
-        // Clear input
-        document.getElementById("chatInput").value = "";
-        toggleBtn();
-    }
-</script>
-"""
-# Use st.components.v1.html to bridge the data back to Python via query params fallback or session state trick
-# Note: In pure standard Streamlit, bridging text from custom HTML back to Python without a full custom component build is complex.
-# We will use a simplified approach: The user types in the custom box, hits enter, and the text is placed into a hidden streamlit text area.
-# But to keep it perfect and bug-free, we will use Streamlit's native chat input but ONLY for the data, and overlay it visually.
-# Actually, the cleanest foolproof way is st.chat_input, but we prevent it from clearing by storing it in st.session_state.
-# Let's revert to st.chat_input but with a solid session state fix.
-
-# FIX: Streamlit st.chat_input clears on submit. We capture it BEFORE the rerun clears it.
-col_chat, col_audio = st.columns([5, 1])
-
-with col_chat:
-    # By checking if it's not None, we store it in session state instantly.
-    chat_val = st.chat_input("Type your request here...", key="chat_input_widget")
-    if chat_val:
-        st.session_state["saved_prompt"] = chat_val
-
-with col_audio:
-    audio_value = st.audio_input("Speak", label_visibility="collapsed")
-
-# Processing File Uploads (Using native file uploader hidden in an expander for stable behaviour)
-with st.expander("📎 Attach a Document (Optional)"):
+with tab_upload:
     uploaded_file = st.file_uploader("Upload PDF or TXT", type=["txt", "md", "csv", "pdf"], label_visibility="collapsed")
-    
-uploaded_text = ""
-if uploaded_file:
-    uploaded_text = extract_file_text(uploaded_file)
-    st.caption("✅ Loaded: " + uploaded_file.name)
+    if uploaded_file:
+        uploaded_text = extract_file_text(uploaded_file)
+        st.caption("✅ Loaded: " + uploaded_file.name)
+        final_input_text = uploaded_text.strip()
+        st.session_state["saved_prompt"] = final_input_text
 
-voice_text = ""
-if audio_value is not None:
-    with st.spinner("Transcribing audio..."):
-        try:
-            voice_text = client.audio.transcriptions.create(
-                file=("req.wav", audio_value.getvalue()),
-                model="whisper-large-v3",
-                language=GROQ_LANGS[lang_name],
-                response_format="text",
-            )
-            st.caption("✅ Transcribed: " + voice_text[:50] + "...")
-        except Exception as e:
-            st.error("Transcription failed: " + str(e))
+with tab_speak:
+    st.markdown("Record your voice, then click Process Audio.")
+    audio_value = st.audio_input("Record", label_visibility="collapsed")
+    if audio_value is not None:
+        if st.button("Process Audio"):
+            with st.spinner("Transcribing..."):
+                try:
+                    voice_text = client.audio.transcriptions.create(
+                        file=("req.wav", audio_value.getvalue()),
+                        model="whisper-large-v3",
+                        language=GROQ_LANGS[lang_name],
+                        response_format="text",
+                    )
+                    with st.spinner("Translating..."):
+                        translated = translate_to_english(voice_text)
+                    st.session_state["saved_prompt"] = translated
+                    st.success("✅ Audio Transcribed & Saved!")
+                    st.info("**Text:** " + translated)
+                except Exception as e:
+                    st.error("Transcription failed: " + str(e))
 
-st.markdown("<br>", unsafe_allow_html=True)
+# Show what is currently saved to be generated
+if st.session_state.get("saved_prompt"):
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.caption("Ready to generate from the text above.")
 
 if st.button("GENERATE PROMPT", key="gen"):
-    # Retrieve from session state
-    final_input = st.session_state.get("saved_prompt", "").strip() or uploaded_text.strip()
+    final_input = st.session_state.get("saved_prompt", "").strip()
     
-    if not final_input and voice_text:
-        with st.spinner("Translating..."):
-            final_input = translate_to_english(voice_text)
-            
     if not final_input:
-        st.warning("Please provide a request first.")
+        st.warning("Please type a request, upload a file, or record audio first.")
         st.stop()
 
     with st.spinner("Forging your prompt..."):
@@ -450,17 +342,19 @@ if st.button("GENERATE PROMPT", key="gen"):
     st.caption("Use the copy icon at the top right of the black box.")
 
     st.markdown("<hr>", unsafe_allow_html=True)
-    # TITLE CHANGED AS REQUESTED
     st.markdown('<div class="card-title">Open prompt with</div>', unsafe_allow_html=True)
 
-    # Render AI Tools
-    for row_start in range(0, len(AI_TOOLS), 4):
-        row_tools = AI_TOOLS[row_start:row_start + 4]
-        cols = st.columns(len(row_tools))
-        for i, tool in enumerate(row_tools):
-            with cols[i]:
-                try:
-                    st.image(tool["icon"], width=36)
-                except:
-                    st.markdown(f"**{tool['name'][0]}**")
-                st.link_button(tool["name"], tool["url"], use_container_width=True)
+    # Render AI Tools as custom HTML for robust icon loading
+    cols = st.columns(4)
+    for i, tool in enumerate(AI_TOOLS):
+        col = cols[i % 4]
+        with col:
+            # We use an HTML block with a fallback onerror for the image
+            card_html = f"""
+            <a href="{tool['url']}" target="_blank" class="ai-card">
+                <img src="{tool['icon']}" class="ai-logo" onerror="this.style.display='none'; document.getElementById('fallback-{i}').style.display='flex';">
+                <div id="fallback-{i}" class="ai-fallback" style="display:none; background-color: {tool['color']};">{tool['initial']}</div>
+                <p class="ai-name">{tool['name']}</p>
+            </a>
+            """
+            st.markdown(card_html, unsafe_allow_html=True)
