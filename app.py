@@ -42,8 +42,8 @@ AI_TOOLS = [
     {
         "name": "ChatGPT",
         "url": "https://chatgpt.com/",
-        "icon": "https://cdn.simpleicons.org/openai/412991",
-        "color": "#412991",
+        "icon": "https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg",
+        "color": "#10A37F",
         "initial": "C"
     },
     {
@@ -86,6 +86,41 @@ AI_TOOLS = [
         "url": "https://www.perplexity.ai/",
         "icon": "https://cdn.simpleicons.org/perplexity/20B8CD",
         "color": "#20B8CD",
+        "initial": "P"
+    },
+    {
+        "name": "Mistral",
+        "url": "https://chat.mistral.ai/",
+        "icon": "https://cdn.simpleicons.org/mistralai/FF7000",
+        "color": "#FF7000",
+        "initial": "M"
+    },
+    {
+        "name": "Hugging Face",
+        "url": "https://huggingface.co/chat/",
+        "icon": "https://cdn.simpleicons.org/huggingface/FFD21E",
+        "color": "#FFD21E",
+        "initial": "H"
+    },
+    {
+        "name": "Poe",
+        "url": "https://poe.com/",
+        "icon": "https://cdn.simpleicons.org/poe/5D5CDE",
+        "color": "#5D5CDE",
+        "initial": "P"
+    },
+    {
+        "name": "You.com",
+        "url": "https://you.com/",
+        "icon": "https://cdn.simpleicons.org/youdotcom/7B3FE4",
+        "color": "#7B3FE4",
+        "initial": "Y"
+    },
+    {
+        "name": "Phind",
+        "url": "https://www.phind.com/",
+        "icon": "https://cdn.simpleicons.org/phind/00A67E",
+        "color": "#00A67E",
         "initial": "P"
     }
 ]
