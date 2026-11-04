@@ -35,7 +35,6 @@ client = Groq(api_key=GROQ_API_KEY)
 
 # =========================================================
 # AI TOOLS
-# Defined before the rendering loop to prevent NameError.
 # =========================================================
 
 AI_TOOLS = [
@@ -117,11 +116,11 @@ AI_TOOLS = [
         "initial": "M"
     },
     {
-        "name": "MS Copilot",
-        "url": "https://copilot.microsoft.com/",
-        "icon": "https://cdn.jsdelivr.net/npm/@thesvg/icons/icons/microsoft-copilot-legacy.svg",
-        "color": "#258FFA",
-        "initial": "M"
+        "name": "Kimi",
+        "url": "https://kimi.moonshot.cn/",
+        "icon": "https://cdn.simpleicons.org/kimi/000000",
+        "color": "#000000",
+        "initial": "K"
     }
 ]
 
@@ -172,8 +171,6 @@ GROQ_LANGS = {
 st.markdown("""
 <style>
 
-    /* GLOBAL STYLING */
-
     html, body, [class*="css"] {
         font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif;
     }
@@ -182,7 +179,6 @@ st.markdown("""
         display: flex;
         align-items: flex-start;
         justify-content: center;
-
         background-image:
             linear-gradient(
                 135deg,
@@ -192,13 +188,10 @@ st.markdown("""
             url(
                 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=2070&auto=format&fit=crop'
             );
-
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
     }
-
-    /* PREVENT BRANDING FROM HIDING BEHIND STREAMLIT HEADER */
 
     .block-container {
         padding-top: 5rem !important;
@@ -207,62 +200,44 @@ st.markdown("""
         margin: 0 auto !important;
     }
 
-    /* GLASS CONTAINER */
-
     .block-container > div:first-child {
         padding: 2rem;
         background: rgba(255, 255, 255, 0.7);
-
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-
         border-radius: 20px;
         border: 1px solid rgba(255, 255, 255, 0.9);
-
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-
         margin: 0 auto;
         width: 100%;
     }
-
-    /* SIDEBAR */
 
     [data-testid="stSidebar"] {
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(20px);
     }
 
-    /* BRANDING */
-
     .plg-tag {
         display: inline-block;
         background: #FFD500;
         color: #000;
-
         font-weight: 900;
         font-size: 0.75rem;
-
         padding: 0.25rem 0.8rem;
         border-radius: 20px;
-
         letter-spacing: 0.1em;
         margin-bottom: 0.5rem;
-
         border: 2px solid #000;
         text-transform: uppercase;
     }
-
-    /* TYPOGRAPHY */
 
     h1 {
         font-size: 1.9rem;
         font-weight: 900;
         color: #111;
-
         line-height: 1.1;
         margin-bottom: 0;
         margin-top: 0;
-
         text-transform: uppercase;
     }
 
@@ -273,24 +248,17 @@ st.markdown("""
     .subtitle {
         color: #333;
         font-size: 0.85rem;
-
         margin-top: 0.2rem;
         margin-bottom: 0.8rem;
-
         font-weight: 700;
     }
-
-    /* TYPEWRITER */
 
     .typewriter-container {
         background: rgba(255, 255, 255, 0.95);
         border: 2px solid #FFD500;
-
         border-radius: 8px;
         padding: 4px 10px;
-
         margin-bottom: 0.8rem;
-
         display: block;
         width: 100%;
         box-sizing: border-box;
@@ -301,34 +269,24 @@ st.markdown("""
         color: #000;
         font-weight: 800;
         font-size: 0.75rem;
-
         font-family: monospace;
         text-transform: uppercase;
-
         margin: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        white-space: normal;
+        word-break: break-word;
     }
-
-    /* CHAT AND AUDIO ALIGNMENT */
 
     div[data-testid="stHorizontalBlock"] {
         align-items: center !important;
         gap: 0.5rem !important;
     }
 
-    /* CHAT INPUT */
-
     [data-testid="stChatInput"] {
         background-color: rgba(255, 255, 255, 0.95) !important;
-
         border: 2px solid #FFD500 !important;
         border-radius: 30px !important;
-
         padding: 6px 12px !important;
         min-height: 52px !important;
-
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     }
 
@@ -336,38 +294,9 @@ st.markdown("""
         border-color: #FF9900 !important;
     }
 
-    /* AUDIO INPUT - FORCE CENTERED BUTTON */
-    [data-testid="stAudioInput"],
-    [data-testid="stAudioInput"] > div,
-    [data-testid="stAudioInput"] > div > div,
-    [data-testid="stAudioInput"] > div > div > div {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 56px !important;
-        min-width: 56px !important;
-        max-width: 56px !important;
-        height: 56px !important;
-        min-height: 56px !important;
-        max-height: 56px !important;
-        overflow: visible !important;
-        gap: 0 !important;
-    }
-
-    /* Hide the label/spacer div that Streamlit renders above the button */
-    [data-testid="stAudioInput"] > div > div:first-child {
-        display: none !important;
-    }
-
     [data-testid="stAudioInput"] button {
         width: 52px !important;
-        min-width: 52px !important;
-        max-width: 52px !important;
         height: 52px !important;
-        min-height: 52px !important;
-        max-height: 52px !important;
         border-radius: 50% !important;
         background: linear-gradient(145deg, #FFE45C, #FFD500) !important;
         border: 2px solid #171717 !important;
@@ -375,26 +304,16 @@ st.markdown("""
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        margin: 0 auto !important;
         padding: 0 !important;
-        position: relative !important;
-        box-shadow: 0 5px 14px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.7) !important;
+        box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
         transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease !important;
     }
 
     [data-testid="stAudioInput"] button:hover {
-        background: linear-gradient(
-            145deg,
-            #FFB52E,
-            #FF9900
-        ) !important;
-
+        background: linear-gradient(145deg, #FFB52E, #FF9900) !important;
         color: #fff !important;
-
         transform: translateY(-2px);
-
-        box-shadow:
-            0 7px 18px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: 0 7px 18px rgba(0, 0, 0, 0.2) !important;
     }
 
     [data-testid="stAudioInput"] button:focus-visible {
@@ -418,24 +337,17 @@ st.markdown("""
         }
     }
 
-    /* GENERATE BUTTON */
-
     .stButton > button {
         background-color: #FFD500;
         color: #000;
-
         border: 2px solid #000;
         border-radius: 30px;
-
         font-weight: 900;
         text-transform: uppercase;
-
         padding: 0.5rem 1.5rem;
         font-size: 0.95rem;
-
         width: 100%;
         margin-top: 0.8rem;
-
         height: 48px;
     }
 
@@ -444,16 +356,12 @@ st.markdown("""
         color: #FFF;
     }
 
-    /* SECTION TITLES */
-
     .card-title {
         font-size: 1rem;
         font-weight: 900;
         color: #111;
         margin: 0.5rem 0;
     }
-
-    /* AI TOOL GRID */
 
     .ai-grid {
         display: grid !important;
@@ -470,21 +378,15 @@ st.markdown("""
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-
         background-color: rgba(255, 255, 255, 0.97) !important;
         border: 2px solid #E0E0E0 !important;
         border-radius: 14px !important;
-
         padding: 14px 8px !important;
-
         text-decoration: none !important;
         color: #000 !important;
-
         transition: all 0.2s ease;
-
         min-height: 105px !important;
         width: 100% !important;
-
         box-sizing: border-box !important;
         margin: 0 !important;
     }
@@ -531,16 +433,11 @@ st.markdown("""
         color: #222;
     }
 
-    /* OUTPUT CODE BLOCK */
-
     .stCodeBlock pre {
         background: rgba(20, 20, 20, 0.95) !important;
         color: #FFD500 !important;
-
         border-radius: 12px;
-
         border: 2px solid rgba(255, 213, 0, 0.5);
-
         font-size: 0.8rem;
         padding: 10px !important;
     }
@@ -550,7 +447,6 @@ st.markdown("""
         margin: 0.8rem 0;
     }
 
-    /* ===== MOBILE RESPONSIVENESS ===== */
     @media (max-width: 768px) {
         .block-container {
             padding-top: 2rem !important;
@@ -586,27 +482,6 @@ st.markdown("""
             min-height: 48px !important;
         }
 
-        [data-testid="stAudioInput"],
-        [data-testid="stAudioInput"] > div,
-        [data-testid="stAudioInput"] > div > div,
-        [data-testid="stAudioInput"] > div > div > div {
-            width: 48px !important;
-            min-width: 48px !important;
-            max-width: 48px !important;
-            height: 48px !important;
-            min-height: 48px !important;
-            max-height: 48px !important;
-        }
-
-        [data-testid="stAudioInput"] button {
-            width: 46px !important;
-            min-width: 46px !important;
-            max-width: 46px !important;
-            height: 46px !important;
-            min-height: 46px !important;
-            max-height: 46px !important;
-        }
-
         .ai-grid {
             grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
         }
@@ -630,6 +505,11 @@ st.markdown("""
 
         .typewriter-text {
             font-size: 0.55rem !important;
+        }
+
+        [data-testid="stAudioInput"] button {
+            width: 44px !important;
+            height: 44px !important;
         }
 
         .ai-grid {
@@ -686,26 +566,16 @@ Resolve ambiguity with stated defaults.
 """
 
 
-# =========================================================
-# PROMPT OPTIMIZATION
-# =========================================================
-
 def optimize_prompt(user_input, domain, tone, depth):
-
     system = (
         META_SYSTEM
         + "\n\nDomain: "
         + DOMAINS.get(domain, DOMAINS["General"])
     )
-
     response = client.chat.completions.create(
         model="openai/gpt-oss-120b",
-
         messages=[
-            {
-                "role": "system",
-                "content": system
-            },
+            {"role": "system", "content": system},
             {
                 "role": "user",
                 "content": (
@@ -716,75 +586,38 @@ def optimize_prompt(user_input, domain, tone, depth):
                 )
             }
         ],
-
         temperature=0.4,
         max_tokens=1500
     )
-
     return response.choices[0].message.content
 
 
-# =========================================================
-# TRANSLATION
-# =========================================================
-
 def translate_to_english(text):
-
     response = client.chat.completions.create(
         model="openai/gpt-oss-120b",
-
         messages=[
             {
                 "role": "system",
-                "content": (
-                    "Translate to English. "
-                    "Output only the translation."
-                )
+                "content": "Translate to English. Output only the translation."
             },
-            {
-                "role": "user",
-                "content": text
-            }
+            {"role": "user", "content": text}
         ],
-
         temperature=0.1,
         max_tokens=800
     )
-
     return response.choices[0].message.content.strip()
 
 
-# =========================================================
-# FILE TEXT EXTRACTION
-# =========================================================
-
 def extract_file_text(uploaded_file):
-
     filename = uploaded_file.name.lower()
     data = uploaded_file.getvalue()
-
     if filename.endswith(".pdf"):
-
         import fitz
-
-        document = fitz.open(
-            stream=data,
-            filetype="pdf"
-        )
-
-        extracted_text = "\n".join(
-            page.get_text()
-            for page in document
-        )
-
+        document = fitz.open(stream=data, filetype="pdf")
+        extracted_text = "\n".join(page.get_text() for page in document)
         document.close()
-
         return extracted_text
-
-    return data.decode(
-        "utf-8",
-        errors="replace"
-    )
+    return data.decode("utf-8", errors="replace")
 
 
 # =========================================================
@@ -792,44 +625,25 @@ def extract_file_text(uploaded_file):
 # =========================================================
 
 with st.sidebar:
-
     st.markdown(
         "<h2 style='text-align: center;'>Settings</h2>",
         unsafe_allow_html=True
     )
-
-    domain = st.selectbox(
-        "Domain",
-        list(DOMAINS.keys())
-    )
-
+    domain = st.selectbox("Domain", list(DOMAINS.keys()))
     tone = st.selectbox(
         "Tone",
-        [
-            "Professional",
-            "Neutral",
-            "Persuasive",
-            "Instructional"
-        ]
+        ["Professional", "Neutral", "Persuasive", "Instructional"]
     )
-
     depth = st.selectbox(
         "Depth",
-        [
-            "Concise",
-            "Standard",
-            "Detailed",
-            "Exhaustive"
-        ],
+        ["Concise", "Standard", "Detailed", "Exhaustive"],
         index=1
     )
-
     lang_name = st.selectbox(
         "Audio Language",
         list(GROQ_LANGS.keys()),
         index=0
     )
-
     st.caption(
         "For Leb Lango, please type instead. "
         "Whisper does not support it directly."
@@ -852,68 +666,27 @@ st.markdown(
 )
 
 
-# =========================================================
-# TYPEWRITER COMPONENT
-# =========================================================
-
 components.html("""
-<div
-    class="typewriter-container"
-    style="margin-bottom:0px;"
->
-    <p
-        class="typewriter-text"
-        id="typewriter"
-    ></p>
+<div class="typewriter-container" style="margin-bottom:0px;">
+    <p class="typewriter-text" id="typewriter"></p>
 </div>
-
 <script>
-
     const texts = [
         "Industry-Grade Production Prompt Engineering",
         "A Better Way to Work with Generative AI",
         "Save Time from Frustrating AI Outputs"
     ];
-
-    let c = 0;
-    let i = 0;
-    let t = "";
-    let l = "";
-    let d = false;
-
+    let c = 0, i = 0, t = "", l = "", d = false;
     (function ty() {
-
-        if (c === texts.length) {
-            c = 0;
-        }
-
+        if (c === texts.length) { c = 0; }
         t = texts[c];
-
-        l = d
-            ? t.slice(0, --i)
-            : t.slice(0, ++i);
-
-        document.getElementById(
-            "typewriter"
-        ).textContent = l;
-
+        l = d ? t.slice(0, --i) : t.slice(0, ++i);
+        document.getElementById("typewriter").textContent = l;
         let s = d ? 20 : 60;
-
-        if (!d && l.length === t.length) {
-            s = 2000;
-            d = true;
-        }
-
-        else if (d && l.length === 0) {
-            d = false;
-            c++;
-            s = 500;
-        }
-
+        if (!d && l.length === t.length) { s = 2000; d = true; }
+        else if (d && l.length === 0) { d = false; c++; s = 500; }
         setTimeout(ty, s);
-
     })();
-
 </script>
 """, height=44)
 
@@ -934,64 +707,39 @@ st.markdown(
 col1, col2 = st.columns([10, 1])
 
 with col1:
-
     chat_val = st.chat_input(
         "Type your request here...",
         accept_file=True,
-        file_type=[
-            "txt",
-            "md",
-            "csv",
-            "pdf"
-        ]
+        file_type=["txt", "md", "csv", "pdf"]
     )
-
     if chat_val:
-
         if chat_val.text:
             st.session_state["saved_prompt"] = chat_val.text
-
         if chat_val.files:
-
             for uploaded_file in chat_val.files:
-
                 st.session_state["saved_prompt"] = (
                     extract_file_text(uploaded_file)
                 )
 
-
 with col2:
-
     audio_val = st.audio_input(
         "",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        width=60
     )
-
     if audio_val is not None:
-
         with st.spinner("Transcribing..."):
-
             try:
-
                 voice_text = client.audio.transcriptions.create(
-                    file=(
-                        "req.wav",
-                        audio_val.getvalue()
-                    ),
-
+                    file=("req.wav", audio_val.getvalue()),
                     model="whisper-large-v3",
-
                     language=GROQ_LANGS[lang_name],
-
                     response_format="text"
                 )
-
                 st.session_state["saved_prompt"] = (
                     translate_to_english(voice_text)
                 )
-
                 st.toast("Voice captured!")
-
             except Exception:
                 st.error(
                     "Mic transcription failed. "
@@ -999,102 +747,46 @@ with col2:
                 )
 
 
-st.markdown(
-    "<br>",
-    unsafe_allow_html=True
-)
+st.markdown("<br>", unsafe_allow_html=True)
 
 
 # =========================================================
 # GENERATE PROMPT
 # =========================================================
 
-if st.button(
-    "GENERATE PROMPT",
-    key="gen"
-):
-
-    final_input = st.session_state.get(
-        "saved_prompt",
-        ""
-    ).strip()
-
+if st.button("GENERATE PROMPT", key="gen"):
+    final_input = st.session_state.get("saved_prompt", "").strip()
     if not final_input:
-
-        st.warning(
-            "Please provide a request "
-            "(type, upload, or speak)."
-        )
-
+        st.warning("Please provide a request (type, upload, or speak).")
         st.stop()
 
     try:
-
         with st.spinner("Forging your prompt..."):
+            prompt = optimize_prompt(final_input, domain, tone, depth)
 
-            prompt = optimize_prompt(
-                final_input,
-                domain,
-                tone,
-                depth
-            )
-
-        # ---------------------------------------------
-        # GENERATED PROMPT
-        # ---------------------------------------------
-
+        st.markdown("<hr>", unsafe_allow_html=True)
         st.markdown(
-            "<hr>",
+            '<div class="card-title">Your Professional Prompt</div>',
             unsafe_allow_html=True
         )
-
-        st.markdown(
-            '<div class="card-title">'
-            'Your Professional Prompt'
-            '</div>',
-            unsafe_allow_html=True
-        )
-
-        st.code(
-            prompt,
-            language="markdown"
-        )
-
+        st.code(prompt, language="markdown")
         st.caption(
-            "Use the copy icon at the top right "
-            "of the black box."
+            "Use the copy icon at the top right of the black box."
         )
 
-        # ---------------------------------------------
-        # OPEN WITH AI TOOLS
-        # ---------------------------------------------
-
+        st.markdown("<hr>", unsafe_allow_html=True)
         st.markdown(
-            "<hr>",
+            '<div class="card-title">Open prompt with</div>',
             unsafe_allow_html=True
         )
 
-        st.markdown(
-            '<div class="card-title">'
-            'Open prompt with'
-            '</div>',
-            unsafe_allow_html=True
-        )
-
-        # Build ALL cards as a single HTML string inside
-        # a CSS grid container. This avoids Streamlit
-        # wrapping each card in its own stMarkdown div,
-        # which was causing uneven spacing / orphan boxes.
         cards = []
-
         for i, tool in enumerate(AI_TOOLS):
-
             tool_name = html.escape(tool["name"])
             tool_url = html.escape(tool["url"], quote=True)
             tool_icon = html.escape(tool["icon"], quote=True)
             tool_color = html.escape(tool["color"], quote=True)
             tool_initial = html.escape(tool["initial"])
-
             fallback_id = f"ai-fallback-{i}"
 
             card = (
@@ -1112,26 +804,14 @@ if st.button(
                 f'<p class="ai-name">{tool_name}</p>'
                 f'</a>'
             )
-
             cards.append(card)
 
-        grid_html = (
-            '<div class="ai-grid">'
-            + "".join(cards)
-            + '</div>'
-        )
-
-        st.markdown(
-            grid_html,
-            unsafe_allow_html=True
-        )
+        grid_html = '<div class="ai-grid">' + "".join(cards) + '</div>'
+        st.markdown(grid_html, unsafe_allow_html=True)
 
     except Exception as error:
-
         st.error(
-            "Something went wrong while generating "
-            "your prompt. Please check your Groq API "
-            "configuration and try again."
+            "Something went wrong while generating your prompt. "
+            "Please check your Groq API configuration and try again."
         )
-
         st.exception(error)
