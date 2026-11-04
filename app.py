@@ -12,33 +12,32 @@ st.set_page_config(page_title="Promptline Guru", page_icon=None, layout="wide")
 
 st.markdown("""
 <style>
-    /* Global Reset & Centering */
+    /* Global Reset & Flex Center */
     html, body, [class*="css"] { font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif; }
     
-    /* Center the container perfectly */
-    .block-container { 
-        padding-top: 4vh !important; 
-        padding-bottom: 4vh !important; 
-        max-width: 900px !important;
-        margin: 0 auto !important;
-    }
-    
-    /* Energetic Runner Background */
-    .stApp { 
+    /* Center the app container perfectly with space below */
+    .stApp {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background-image: 
             linear-gradient(135deg, rgba(255, 213, 0, 0.35), rgba(255, 153, 0, 0.25)),
             url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=2070&auto=format&fit=crop');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    }
+    
+    .block-container { 
+        padding-top: 2vh !important; 
+        padding-bottom: 10vh !important; /* Leaves space down */
+        max-width: 850px !important;
+        margin: 0 auto !important;
     }
     
     /* Sleeker Glassmorphism Container */
     .block-container > div:first-child { 
-        padding: 2rem 2.5rem; 
+        padding: 2.5rem 2.5rem; 
         background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
@@ -73,43 +72,58 @@ st.markdown("""
     }
     .typewriter-text { color: #000; font-weight: 800; font-size: 0.8rem; font-family: monospace; text-transform: uppercase; margin: 0; }
 
-    /* --- WHATSAPP CHAT BOX & VOICE BOX --- */
-    div[data-testid="stHorizontalBlock"] > div:nth-child(1) { padding-right: 10px; }
-    div[data-testid="stHorizontalBlock"] > div:nth-child(2) { display: flex; align-items: center; justify-content: center; }
-
-    /* Chat Input - Larger */
+    /* --- FIX AUDIO WIDGET STYLING --- */
+    /* Align columns vertically */
+    div[data-testid="stHorizontalBlock"] { align-items: center !important; }
+    
+    /* Chat Input */
     [data-testid="stChatInput"] {
         background-color: rgba(255, 255, 255, 0.95) !important;
         border: 2px solid #FFD500 !important;
         border-radius: 30px !important;
-        padding: 6px 15px !important;
-        min-height: 55px !important;
+        padding: 8px 15px !important;
+        min-height: 54px !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
-    [data-testid="stChatInput"] textarea { font-size: 1rem !important; }
     [data-testid="stChatInput"]:focus-within { border-color: #FF9900 !important; }
     
-    /* Audio Input - Perfectly Round & Large */
-    [data-testid="stAudioInput"] { margin: 0 !important; padding: 0 !important; }
+    /* Audio Input - Deep Target to fix native Streamlit styling */
+    [data-testid="stAudioInput"] { 
+        margin: 0 !important; 
+        padding: 0 !important;
+        width: 54px !important;
+    }
+    /* Target the actual button inside the audio component */
     [data-testid="stAudioInput"] button {
         border-radius: 50% !important;
         background-color: #FFD500 !important;
         border: 2px solid #000 !important;
-        width: 55px !important;  
-        height: 55px !important; 
+        width: 54px !important;
+        height: 54px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+        color: #000 !important;
     }
-    [data-testid="stAudioInput"] button:hover { background-color: #FF9900 !important; color: #fff !important; }
-    [data-testid="stAudioInput"] button svg { width: 26px !important; height: 26px !important; }
+    [data-testid="stAudioInput"] button:hover { 
+        background-color: #FF9900 !important; 
+        color: #fff !important; 
+    }
+    [data-testid="stAudioInput"] button svg { 
+        width: 24px !important; 
+        height: 24px !important; 
+    }
+    /* Hide the native dropdown text if any */
+    [data-testid="stAudioInput"] > div {
+        background: transparent !important;
+    }
 
     /* Generate Button */
     .stButton > button { 
         background-color: #FFD500; color: #000; border: 2px solid #000; 
         border-radius: 30px; font-weight: 900; text-transform: uppercase;
-        padding: 0.6rem 1.5rem; font-size: 1rem; width: 100%; margin-top: 0.8rem;
+        padding: 0.6rem 1.5rem; font-size: 1rem; width: 100%; margin-top: 1rem;
         height: 50px;
     }
     .stButton > button:hover { background-color: #FF9900; color: #FFF; }
@@ -233,7 +247,7 @@ components.html("""
 
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
-# --- ENLARGED WHATSAPP CHAT BOX LAYOUT ---
+# --- CHAT BOX & AUDIO LAYOUT ---
 col1, col2 = st.columns([8, 1])
 
 with col1:
