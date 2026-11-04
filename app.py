@@ -969,46 +969,44 @@ if st.button(
 
                 fallback_id = f"ai-fallback-{i}"
 
-                card_html = f"""
-                <a
-                    href="{tool_url}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="ai-card"
-                >
-
-                    <img
-                        src="{tool_icon}"
-                        alt="{tool_name} logo"
-                        class="ai-logo"
-                        style="width:40px;height:40px;object-fit:contain;display:block;margin-bottom:9px;"
-                        onerror="
-                            this.style.display='none';
-                            this.nextElementSibling.style.display='flex';
-                        "
-                    >
-
-                    <div
-                        id="{fallback_id}"
-                        class="ai-fallback"
-                        style="
-                            display:none;
-                            background-color:{tool_color};
-                            color:#ffffff;
-                        "
-                    >
-                        {tool_initial}
-                    </div>
-
-                    <p class="ai-name">
-                        {tool_name}
-                    </p>
-
-                </a>
-                """
-
                 # IMPORTANT:
-                # Render HTML, not a Python code block.
+                # Build the HTML as a single contiguous string
+                # (no leading whitespace / newlines) so that
+                # Streamlit's markdown renderer does NOT
+                # interpret it as an indented code block.
+                card_html = (
+                    f'<a href="{tool_url}" '
+                    f'target="_blank" '
+                    f'rel="noopener noreferrer" '
+                    f'class="ai-card" '
+                    f'style="display:flex;flex-direction:column;'
+                    f'align-items:center;justify-content:center;'
+                    f'background-color:rgba(255,255,255,0.97);'
+                    f'border:2px solid #E0E0E0;border-radius:14px;'
+                    f'padding:14px 8px;text-decoration:none !important;'
+                    f'color:#000 !important;min-height:105px;'
+                    f'width:100%;margin-bottom:8px;box-sizing:border-box;">'
+                    f'<img src="{tool_icon}" '
+                    f'alt="{tool_name} logo" '
+                    f'class="ai-logo" '
+                    f'style="width:40px;height:40px;object-fit:contain;'
+                    f'display:block;margin-bottom:9px;" '
+                    f'onerror="this.style.display=\'none\';'
+                    f'this.nextElementSibling.style.display=\'flex\';" />'
+                    f'<div id="{fallback_id}" class="ai-fallback" '
+                    f'style="display:none;background-color:{tool_color};'
+                    f'color:#ffffff;width:40px;height:40px;'
+                    f'border-radius:50%;align-items:center;'
+                    f'justify-content:center;font-weight:900;'
+                    f'font-size:1.1rem;margin-bottom:9px;">'
+                    f'{tool_initial}</div>'
+                    f'<p class="ai-name" '
+                    f'style="font-weight:800;font-size:0.75rem;'
+                    f'text-align:center;margin:0;color:#222;">'
+                    f'{tool_name}</p>'
+                    f'</a>'
+                )
+
                 st.markdown(
                     card_html,
                     unsafe_allow_html=True
