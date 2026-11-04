@@ -53,34 +53,10 @@ st.markdown("""
         font-size: 0.85rem;
     }
 
-    /* Marquee Container */
-    .marquee-container {
-        background: #FFD500;
-        border: 2px solid #000000;
-        border-radius: 30px;
-        padding: 8px 0;
-        overflow: hidden;
-        white-space: nowrap;
-        margin-bottom: 1.5rem;
-    }
-    .marquee-text {
-        display: inline-block;
-        font-weight: 900;
-        font-size: 1rem;
-        color: #000000;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        animation: scroll-left 15s linear infinite;
-    }
-    @keyframes scroll-left {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
-    }
-
-    /* App Name Tag */
+    /* App Name Tag - Restored exactly as requested */
     .plg-tag { 
         display: inline-block; 
-        background: #FFFFFF; 
+        background: rgba(255, 255, 255, 0.5); 
         color: #000000; 
         font-weight: 900; 
         font-size: 0.8rem; 
@@ -103,8 +79,35 @@ st.markdown("""
         text-transform: uppercase;
     }
     h1 .highlight { color: #FF9900; }
-    .subtitle { color: #333333; font-size: 1.05rem; margin-top: 0.5rem; margin-bottom: 2rem; font-weight: 700; }
-    
+    .subtitle { color: #333333; font-size: 1.05rem; margin-top: 0.5rem; margin-bottom: 1rem; font-weight: 700; }
+
+    /* Typewriter Message Box */
+    .typewriter-container {
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid #FFD500;
+        border-radius: 12px;
+        padding: 12px 18px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        display: inline-block;
+        min-width: 300px;
+    }
+    .typewriter-text {
+        color: #000000;
+        font-weight: 800;
+        font-size: 1rem;
+        font-family: monospace;
+        text-transform: uppercase;
+        margin: 0;
+        display: inline-block;
+    }
+    .cursor {
+        color: #FF9900;
+        font-weight: bold;
+        animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
     /* Chat Input Customization */
     [data-testid="stChatInput"] {
         background-color: rgba(255, 255, 255, 0.95) !important;
@@ -192,7 +195,6 @@ DOMAINS = {
 
 GROQ_LANGS = {"English": "en", "Swahili": "sw", "French": "fr", "Arabic": "ar", "Portuguese": "pt", "Spanish": "es"}
 
-# Direct, stable favicons for AI tools
 AI_TOOLS = [
     {"name": "ChatGPT", "url": "https://chat.openai.com", "icon": "https://chat.openai.com/favicon.ico"},
     {"name": "Claude", "url": "https://claude.ai", "icon": "https://claude.ai/favicon.ico"},
@@ -254,19 +256,55 @@ with st.sidebar:
 
 # ========== UI Main ==========
 st.markdown('<div class="plg-tag">PROMPTLINE GURU</div>', unsafe_allow_html=True)
-
-# Marquee
-st.markdown("""
-<div class="marquee-container">
-    <div class="marquee-text">
-        INDUSTRY-GRADE PRODUCTION PROMPT ENGINEERING &nbsp;&nbsp;|&nbsp;&nbsp; 
-        A BETTER WAY TO WORK WITH GENERATIVE AI &nbsp;&nbsp;|&nbsp;&nbsp; 
-        SAVE TIME FROM FRUSTRATING AI OUTPUTS
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
 st.markdown('<h1>Prompt Better.<br>Build <span class="highlight">Faster.</span></h1>', unsafe_allow_html=True)
+
+# Typewriter Animation Component
+typewriter_html = """
+<div class="typewriter-container">
+    <p class="typewriter-text" id="typewriter"></p><span class="cursor">|</span>
+</div>
+
+<script>
+    const texts = [
+        "Industry-Grade Production Prompt Engineering",
+        "A Better Way to Work with Generative AI",
+        "Save Time from Frustrating AI Outputs"
+    ];
+    let count = 0;
+    let index = 0;
+    let currentText = "";
+    let letter = "";
+    let isDeleting = false;
+
+    (function type() {
+        if (count === texts.length) { count = 0; }
+        currentText = texts[count];
+        
+        if (isDeleting) {
+            letter = currentText.slice(0, --index);
+        } else {
+            letter = currentText.slice(0, ++index);
+        }
+
+        document.getElementById("typewriter").textContent = letter;
+
+        let typeSpeed = isDeleting ? 30 : 70;
+
+        if (!isDeleting && letter.length === currentText.length) {
+            typeSpeed = 2000;
+            isDeleting = true;
+        } else if (isDeleting && letter.length === 0) {
+            isDeleting = false;
+            count++;
+            typeSpeed = 500;
+        }
+
+        setTimeout(type, typeSpeed);
+    })();
+</script>
+"""
+components.html(typewriter_html, height=80)
+
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
 # Integrated Chat Box + Audio Recorder
@@ -276,11 +314,16 @@ st.caption("Use the paperclip to upload a document, or the microphone to speak."
 col_chat, col_audio = st.columns([5, 1])
 
 with col_chat:
-    # We store the chat input in session state so it doesn't vanish
-    chat_val = st.chat_input("Type your request here...", accept_file=True, file_type=["txt", "md", "csv", "pdf"], key="chat_input_key")
+    # Notice the key="chat_box". This helps us track when it is triggered.
+    chat_val = st.chat_input("Type your request here...", accept_file=True, file_type=["txt", "md", "csv", "pdf"], key="chat_box")
+    
+    # CRITICAL FIX: We catch the input and immediately stash it in session_state.
+    # Because st.chat_input clears the UI on submit, if we don't save it here, it vanishes.
     if chat_val:
-        st.session_state["saved_text"] = chat_val.text
-        st.session_state["saved_files"] = chat_val.files
+        if chat_val.text:
+            st.session_state["saved_text"] = chat_val.text
+        if chat_val.files:
+            st.session_state["saved_files"] = chat_val.files
 
 with col_audio:
     audio_value = st.audio_input("Speak", label_visibility="collapsed")
@@ -309,7 +352,7 @@ if audio_value is not None:
 st.markdown("<br>", unsafe_allow_html=True)
 
 if st.button("GENERATE PROMPT", key="gen"):
-    # Retrieve from session state if the chat input was cleared
+    # We pull from st.session_state instead of the chat_val variable directly
     final_input = st.session_state.get("saved_text", "").strip() or uploaded_text.strip()
     
     if not final_input and voice_text:
