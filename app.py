@@ -1,7 +1,6 @@
 import os
 import html
 import streamlit as st
-import streamlit.components.v1 as components
 from groq import Groq
 
 
@@ -98,18 +97,6 @@ st.markdown("""
     h1 .highlight { color: #FF9900; }
     .subtitle { color: #333; font-size: 0.85rem; margin: 0.2rem 0 0.8rem; font-weight: 700; }
 
-    .typewriter-container {
-        background: rgba(255,255,255,0.95); border: 2px solid #FFD500;
-        border-radius: 8px; padding: 6px 10px; margin-bottom: 0.8rem;
-        display: block; width: 100%; box-sizing: border-box; min-height: 32px;
-    }
-
-    .typewriter-text {
-        color: #000; font-weight: 800; font-size: 0.75rem; font-family: monospace;
-        text-transform: uppercase; margin: 0; white-space: normal;
-        word-break: break-word; overflow-wrap: anywhere; line-height: 1.4;
-    }
-
     div[data-testid="stHorizontalBlock"] { align-items: center !important; gap: 0.5rem !important; }
 
     [data-testid="stChatInput"] {
@@ -203,16 +190,6 @@ st.markdown("""
         h1 { font-size: 1.5rem !important; }
         .subtitle { font-size: 0.8rem !important; }
 
-        .typewriter-container {
-            min-height: 56px !important;
-            padding: 8px 10px !important;
-        }
-
-        .typewriter-text {
-            font-size: 0.68rem !important;
-            line-height: 1.6 !important;
-        }
-
         .stButton > button { height: 44px !important; font-size: 0.85rem !important; }
         [data-testid="stChatInput"] { min-height: 48px !important; }
         .ai-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
@@ -235,16 +212,6 @@ st.markdown("""
         }
 
         h1 { font-size: 1.3rem !important; }
-
-        .typewriter-container {
-            min-height: 60px !important;
-            padding: 8px 10px !important;
-        }
-
-        .typewriter-text {
-            font-size: 0.62rem !important;
-            line-height: 1.6 !important;
-        }
 
         [data-testid="stAudioInput"] button {
             width: 44px !important;
@@ -328,29 +295,53 @@ st.markdown('<div class="plg-tag">PROMPTLINE GURU</div>', unsafe_allow_html=True
 st.markdown('<h1>Prompt Better.<br>Build <span class="highlight">Faster.</span></h1>', unsafe_allow_html=True)
 
 
-components.html("""
-<div class="typewriter-container" style="margin-bottom:0px;">
-    <p class="typewriter-text" id="typewriter"></p>
+st.markdown("""
+<style>
+@keyframes typewriter {
+    from { max-width: 0; }
+    to   { max-width: 100%; }
+}
+.tw-wrap {
+    background: rgba(255,255,255,0.95);
+    border: 2px solid #FFD500;
+    border-radius: 8px;
+    padding: 4px 10px;
+    margin-bottom: 0.8rem;
+    display: inline-block;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.tw-text {
+    color: #000;
+    font-weight: 800;
+    font-size: 0.75rem;
+    font-family: monospace;
+    text-transform: uppercase;
+    margin: 0;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid #FF9900;
+    animation: typewriter 6s steps(60, end) infinite alternate;
+}
+@media (max-width: 768px) {
+    .tw-text { font-size: 0.68rem; }
+}
+@media (max-width: 480px) {
+    .tw-text {
+        font-size: 0.62rem;
+        white-space: normal;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        animation: none;
+        border-right: none;
+    }
+}
+</style>
+<div class="tw-wrap">
+    <span class="tw-text">Industry-Grade Production Prompt Engineering</span>
 </div>
-<script>
-    const texts = [
-        "Industry-Grade Production Prompt Engineering",
-        "A Better Way to Work with Generative AI",
-        "Save Time from Frustrating AI Outputs"
-    ];
-    let c = 0, i = 0, t = "", l = "", d = false;
-    (function ty() {
-        if (c === texts.length) { c = 0; }
-        t = texts[c];
-        l = d ? t.slice(0, --i) : t.slice(0, ++i);
-        document.getElementById("typewriter").textContent = l;
-        let s = d ? 20 : 60;
-        if (!d && l.length === t.length) { s = 2000; d = true; }
-        else if (d && l.length === 0) { d = false; c++; s = 500; }
-        setTimeout(ty, s);
-    })();
-</script>
-""", height=88, scrolling=False)
+""", unsafe_allow_html=True)
 
 
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
