@@ -3,13 +3,19 @@ import streamlit as st
 import streamlit.components.v1 as components
 from groq import Groq
 
+# ========== API CONFIGURATION ==========
 if "GROQ_API_KEY" in st.secrets:
     os.environ["GROQ_API_KEY"] = st.secrets["GROQ_API_KEY"]
 
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
-st.set_page_config(page_title="Promptline Guru", page_icon=None, layout="wide")
+st.set_page_config(
+    page_title="Promptline Guru",
+    page_icon=None,
+    layout="wide"
+)
 
+# ========== CUSTOM CSS ==========
 st.markdown("""
 <style>
     /* Global Reset */
@@ -17,19 +23,24 @@ st.markdown("""
         font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif;
     }
 
-    /* Layout: Prevent content from being pushed behind Streamlit header */
+    /* Main App Background and Layout */
     .stApp {
         display: flex;
         align-items: flex-start;
         justify-content: center;
         background-image:
-            linear-gradient(135deg, rgba(255, 213, 0, 0.35), rgba(255, 153, 0, 0.25)),
+            linear-gradient(
+                135deg,
+                rgba(255, 213, 0, 0.35),
+                rgba(255, 153, 0, 0.25)
+            ),
             url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=2070&auto=format&fit=crop');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
     }
 
+    /* Prevent Content from Being Hidden Behind Streamlit Header */
     .block-container {
         padding-top: 5rem !important;
         padding-bottom: 15vh !important;
@@ -37,7 +48,7 @@ st.markdown("""
         margin: 0 auto !important;
     }
 
-    /* Small, Centered Glassmorphism Container */
+    /* Glassmorphism Container */
     .block-container > div:first-child {
         padding: 2rem;
         background: rgba(255, 255, 255, 0.7);
@@ -114,7 +125,7 @@ st.markdown("""
         margin: 0;
     }
 
-    /* Audio and Chat Alignment */
+    /* Chat and Audio Alignment */
     div[data-testid="stHorizontalBlock"] {
         align-items: center !important;
         gap: 0.5rem !important;
@@ -134,7 +145,7 @@ st.markdown("""
         border-color: #FF9900 !important;
     }
 
-    /* Improved Audio Input Container */
+    /* Audio Input Container */
     [data-testid="stAudioInput"] {
         width: 56px !important;
         min-width: 56px !important;
@@ -152,7 +163,7 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Enhanced Audio Recording Button */
+    /* Audio Recording Button */
     [data-testid="stAudioInput"] button {
         border-radius: 50% !important;
         background: linear-gradient(145deg, #FFE45C, #FFD500) !important;
@@ -193,7 +204,7 @@ st.markdown("""
         height: 23px !important;
     }
 
-    /* Reduced Motion Accessibility */
+    /* Accessibility */
     @media (prefers-reduced-motion: reduce) {
         [data-testid="stAudioInput"] button {
             transition: none !important;
@@ -220,53 +231,59 @@ st.markdown("""
         color: #FFF;
     }
 
-    /* AI Tool Cards Grid */
+    /* AI Tool Cards */
     .ai-card {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background-color: rgba(255, 255, 255, 0.95);
+        background-color: rgba(255, 255, 255, 0.97);
         border: 2px solid #E0E0E0;
-        border-radius: 12px;
-        padding: 0.5rem 0.3rem;
-        text-decoration: none;
-        color: #000;
-        transition: all 0.2s;
+        border-radius: 14px;
+        padding: 1rem 0.5rem;
+        text-decoration: none !important;
+        color: #000 !important;
+        transition: all 0.25s ease;
         height: 100%;
-        margin-bottom: 8px;
+        min-height: 100px;
+        margin-bottom: 10px;
     }
 
     .ai-card:hover {
         border-color: #FFD500;
-        transform: translateY(-2px);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.12);
     }
 
+    /* AI Brand Logos */
     .ai-logo {
-        width: 24px;
-        height: 24px;
-        margin-bottom: 4px;
+        width: 38px;
+        height: 38px;
+        margin-bottom: 9px;
         object-fit: contain;
+        display: block;
     }
 
     .ai-name {
         font-weight: 800;
-        font-size: 0.65rem;
+        font-size: 0.75rem;
         text-align: center;
         margin: 0;
+        color: #111;
     }
 
+    /* Fallback Logo */
     .ai-fallback {
-        width: 24px;
-        height: 24px;
+        width: 38px;
+        height: 38px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 900;
-        font-size: 0.85rem;
+        font-size: 1rem;
         color: #FFF;
-        margin-bottom: 4px;
+        margin-bottom: 9px;
     }
 
     /* Output Code Block */
@@ -279,6 +296,15 @@ st.markdown("""
         padding: 10px !important;
     }
 
+    /* Section Titles */
+    .card-title {
+        font-size: 1rem;
+        font-weight: 900;
+        color: #111;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+    }
+
     hr {
         border-color: rgba(0,0,0,0.1);
         margin: 0.8rem 0;
@@ -287,6 +313,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+# ========== DOMAIN SETTINGS ==========
 DOMAINS = {
     "General": "General-purpose professional work.",
     "Software Engineering": "Code, architecture, debugging. Emphasize correctness and runnable output.",
@@ -298,6 +325,7 @@ DOMAINS = {
 }
 
 
+# ========== AUDIO LANGUAGES ==========
 GROQ_LANGS = {
     "English": "en",
     "Swahili": "sw",
@@ -308,59 +336,61 @@ GROQ_LANGS = {
 }
 
 
+# ========== AI PLATFORMS ==========
 AI_TOOLS = [
     {
         "name": "ChatGPT",
-        "url": "https://chat.openai.com",
-        "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/openai-color.png",
-        "color": "#10A37F",
+        "url": "https://chatgpt.com",
+        "icon": "https://cdn.simpleicons.org/openai/412991",
+        "color": "#412991",
         "initial": "C"
     },
     {
         "name": "Claude",
         "url": "https://claude.ai",
-        "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/claude-color.png",
+        "icon": "https://cdn.simpleicons.org/anthropic/D97757",
         "color": "#D97757",
         "initial": "C"
     },
     {
         "name": "Gemini",
         "url": "https://gemini.google.com",
-        "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/gemini-color.png",
-        "color": "#4285F4",
+        "icon": "https://cdn.simpleicons.org/googlegemini/8E75B2",
+        "color": "#8E75B2",
         "initial": "G"
     },
     {
         "name": "Grok",
         "url": "https://grok.com",
-        "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/grok-color.png",
+        "icon": "https://cdn.simpleicons.org/grok/000000",
         "color": "#000000",
         "initial": "G"
     },
     {
         "name": "DeepSeek",
         "url": "https://chat.deepseek.com",
-        "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/deepseek-color.png",
+        "icon": "https://cdn.simpleicons.org/deepseek/4D6BFE",
         "color": "#4D6BFE",
         "initial": "D"
     },
     {
         "name": "Copilot",
         "url": "https://copilot.microsoft.com",
-        "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/copilot-color.png",
-        "color": "#0078D4",
+        "icon": "https://cdn.simpleicons.org/microsoftcopilot/258FFA",
+        "color": "#258FFA",
         "initial": "C"
     },
     {
         "name": "Perplexity",
         "url": "https://www.perplexity.ai",
-        "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/perplexity-color.png",
-        "color": "#20808D",
+        "icon": "https://cdn.simpleicons.org/perplexity/20B8CD",
+        "color": "#20B8CD",
         "initial": "P"
-    },
+    }
 ]
 
 
+# ========== PROMPT ENGINEERING SYSTEM ==========
 META_SYSTEM = """You are a senior prompt engineer. Convert a rough request into a production-ready prompt.
 Output ONLY the prompt. Structure: ROLE, OBJECTIVE, CONTEXT AND CONSTRAINTS, INPUTS, PROCESS, OUTPUT FORMAT, QUALITY BAR.
 QUALITY BAR must contain concrete, checkable criteria.
@@ -368,12 +398,18 @@ Do NOT answer the user's request. Resolve ambiguity with stated defaults."""
 
 
 def optimize_prompt(user_input, domain, tone, depth):
-    system = META_SYSTEM + "\n\nDomain: " + DOMAINS.get(domain, DOMAINS["General"])
+    system = META_SYSTEM + "\n\nDomain: " + DOMAINS.get(
+        domain,
+        DOMAINS["General"]
+    )
 
     resp = client.chat.completions.create(
         model="openai/gpt-oss-120b",
         messages=[
-            {"role": "system", "content": system},
+            {
+                "role": "system",
+                "content": system
+            },
             {
                 "role": "user",
                 "content": (
@@ -391,6 +427,7 @@ def optimize_prompt(user_input, domain, tone, depth):
     return resp.choices[0].message.content
 
 
+# ========== TRANSLATION FUNCTION ==========
 def translate_to_english(text):
     resp = client.chat.completions.create(
         model="openai/gpt-oss-120b",
@@ -399,7 +436,10 @@ def translate_to_english(text):
                 "role": "system",
                 "content": "Translate to English. Output only the translation."
             },
-            {"role": "user", "content": text},
+            {
+                "role": "user",
+                "content": text
+            },
         ],
         temperature=0.1,
         max_tokens=800,
@@ -408,6 +448,7 @@ def translate_to_english(text):
     return resp.choices[0].message.content.strip()
 
 
+# ========== FILE EXTRACTION ==========
 def extract_file_text(f):
     name = f.name.lower()
     data = f.getvalue()
@@ -416,22 +457,27 @@ def extract_file_text(f):
         import fitz
 
         doc = fitz.open(stream=data, filetype="pdf")
-        text = "\n".join(page.get_text() for page in doc)
+        extracted_text = "\n".join(
+            page.get_text() for page in doc
+        )
         doc.close()
 
-        return text
+        return extracted_text
 
     return data.decode("utf-8", errors="replace")
 
 
-# ========== Sidebar Settings ==========
+# ========== SIDEBAR SETTINGS ==========
 with st.sidebar:
     st.markdown(
         "<h2 style='text-align: center;'>Settings</h2>",
         unsafe_allow_html=True
     )
 
-    domain = st.selectbox("Domain", list(DOMAINS.keys()))
+    domain = st.selectbox(
+        "Domain",
+        list(DOMAINS.keys())
+    )
 
     tone = st.selectbox(
         "Tone",
@@ -455,7 +501,9 @@ with st.sidebar:
     )
 
 
-# ========== UI Main ==========
+# ========== MAIN USER INTERFACE ==========
+
+# Branding
 st.markdown(
     '<div class="plg-tag">PROMPTLINE GURU</div>',
     unsafe_allow_html=True
@@ -467,7 +515,7 @@ st.markdown(
 )
 
 
-# Typewriter Component
+# ========== TYPEWRITER COMPONENT ==========
 components.html("""
 <div class="typewriter-container" style="margin-bottom:0px;">
     <p class="typewriter-text" id="typewriter"></p>
@@ -508,13 +556,14 @@ components.html("""
 """, height=40)
 
 
+# ========== SUBTITLE ==========
 st.markdown(
     '<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>',
     unsafe_allow_html=True
 )
 
 
-# --- TIGHT CHAT BOX & AUDIO LAYOUT ---
+# ========== CHAT AND AUDIO INPUT ==========
 col1, col2 = st.columns([10, 1])
 
 with col1:
@@ -549,7 +598,9 @@ with col2:
                     response_format="text",
                 )
 
-                st.session_state["saved_prompt"] = translate_to_english(v_txt)
+                st.session_state["saved_prompt"] = translate_to_english(
+                    v_txt
+                )
 
                 st.toast("Voice captured!")
 
@@ -560,13 +611,18 @@ with col2:
 st.markdown("<br>", unsafe_allow_html=True)
 
 
-# --- GENERATION LOGIC ---
+# ========== GENERATE PROMPT ==========
 if st.button("GENERATE PROMPT", key="gen"):
 
-    final_input = st.session_state.get("saved_prompt", "").strip()
+    final_input = st.session_state.get(
+        "saved_prompt",
+        ""
+    ).strip()
 
     if not final_input:
-        st.warning("Please provide a request (type, upload, or speak).")
+        st.warning(
+            "Please provide a request (type, upload, or speak)."
+        )
         st.stop()
 
     with st.spinner("Forging your prompt..."):
@@ -584,18 +640,24 @@ if st.button("GENERATE PROMPT", key="gen"):
         unsafe_allow_html=True
     )
 
-    st.code(prompt, language="markdown")
+    st.code(
+        prompt,
+        language="markdown"
+    )
 
-    st.caption("Use the copy icon at the top right of the black box.")
+    st.caption(
+        "Use the copy icon at the top right of the black box."
+    )
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
+
+    # ========== OPEN PROMPT WITH AI PLATFORMS ==========
     st.markdown(
         '<div class="card-title">Open prompt with</div>',
         unsafe_allow_html=True
     )
 
-    # AI Logos with Color and Fallback
     cols = st.columns(4)
 
     for i, tool in enumerate(AI_TOOLS):
@@ -603,23 +665,36 @@ if st.button("GENERATE PROMPT", key="gen"):
 
         with col:
             card_html = f"""
-            <a href="{tool['url']}" target="_blank" class="ai-card">
+            <a href="{tool['url']}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="ai-card">
+
                 <img
                     src="{tool['icon']}"
                     class="ai-logo"
-                    onerror="this.style.display='none'; document.getElementById('fallback-{i}').style.display='flex';"
+                    alt="{tool['name']} logo"
+                    onerror="
+                        this.style.display='none';
+                        this.nextElementSibling.style.display='flex';
+                    "
                 >
 
                 <div
-                    id="fallback-{i}"
                     class="ai-fallback"
-                    style="display:none; background-color: {tool['color']};"
-                >
+                    style="
+                        display:none;
+                        background-color:{tool['color']};
+                    ">
                     {tool['initial']}
                 </div>
 
                 <p class="ai-name">{tool['name']}</p>
+
             </a>
             """
 
-            st.markdown(card_html, unsafe_allow_html=True)
+            st.markdown(
+                card_html,
+                unsafe_allow_html=True
+            )
