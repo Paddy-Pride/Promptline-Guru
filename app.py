@@ -424,17 +424,31 @@ st.markdown("""
         margin: 0.5rem 0;
     }
 
-    /* AI TOOL CARDS */
+    /* AI TOOL GRID */
+
+    .ai-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    @media (max-width: 640px) {
+        .ai-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+    }
 
     .ai-card {
         display: flex !important;
         flex-direction: column !important;
-
         align-items: center !important;
         justify-content: center !important;
 
         background-color: rgba(255, 255, 255, 0.97) !important;
-
         border: 2px solid #E0E0E0 !important;
         border-radius: 14px !important;
 
@@ -448,60 +462,49 @@ st.markdown("""
         min-height: 105px !important;
         width: 100% !important;
 
-        margin-bottom: 8px !important;
         box-sizing: border-box !important;
+        margin: 0 !important;
     }
 
     .ai-card:hover {
         border-color: #FFD500 !important;
         transform: translateY(-3px);
-
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.09);
-    }
-
-    .ai-logo {
-        width: 40px !important;
-        height: 40px !important;
-
-        object-fit: contain !important;
-        display: block !important;
-
-        margin: 0 !important;
     }
 
     .ai-icon-slot {
         width: 40px;
         height: 40px;
-
         display: flex;
         align-items: center;
         justify-content: center;
-
         margin-bottom: 9px;
+    }
+
+    .ai-logo {
+        width: 40px !important;
+        height: 40px !important;
+        object-fit: contain !important;
+        display: block !important;
+        margin: 0 !important;
     }
 
     .ai-fallback {
         width: 40px;
         height: 40px;
-
         border-radius: 50%;
-
         align-items: center;
         justify-content: center;
-
         font-weight: 900;
         font-size: 1.1rem;
-
         margin: 0;
     }
 
     .ai-name {
         font-weight: 800;
         font-size: 0.75rem;
-
         text-align: center;
         margin: 0 !important;
-
         color: #222;
     }
 
@@ -952,54 +955,50 @@ if st.button(
             unsafe_allow_html=True
         )
 
-        # AI_TOOLS is defined above, before this loop.
-        cols = st.columns(4)
+        # Build ALL cards as a single HTML string inside
+        # a CSS grid container. This avoids Streamlit
+        # wrapping each card in its own stMarkdown div,
+        # which was causing uneven spacing / orphan boxes.
+        cards = []
 
         for i, tool in enumerate(AI_TOOLS):
 
-            col = cols[i % 4]
+            tool_name = html.escape(tool["name"])
+            tool_url = html.escape(tool["url"], quote=True)
+            tool_icon = html.escape(tool["icon"], quote=True)
+            tool_color = html.escape(tool["color"], quote=True)
+            tool_initial = html.escape(tool["initial"])
 
-            with col:
+            fallback_id = f"ai-fallback-{i}"
 
-                tool_name = html.escape(tool["name"])
-                tool_url = html.escape(
-                    tool["url"],
-                    quote=True
-                )
-                tool_icon = html.escape(
-                    tool["icon"],
-                    quote=True
-                )
-                tool_color = html.escape(
-                    tool["color"],
-                    quote=True
-                )
-                tool_initial = html.escape(
-                    tool["initial"]
-                )
+            card = (
+                f'<a href="{tool_url}" target="_blank" '
+                f'rel="noopener noreferrer" class="ai-card">'
+                f'<div class="ai-icon-slot">'
+                f'<img src="{tool_icon}" alt="{tool_name} logo" '
+                f'class="ai-logo" '
+                f'onerror="this.style.display=\'none\';'
+                f'this.nextElementSibling.style.display=\'flex\';" />'
+                f'<div id="{fallback_id}" class="ai-fallback" '
+                f'style="display:none;background-color:{tool_color};'
+                f'color:#ffffff;">{tool_initial}</div>'
+                f'</div>'
+                f'<p class="ai-name">{tool_name}</p>'
+                f'</a>'
+            )
 
-                fallback_id = f"ai-fallback-{i}"
+            cards.append(card)
 
-                card_html = (
-                    f'<a href="{tool_url}" target="_blank" '
-                    f'rel="noopener noreferrer" class="ai-card">'
-                    f'<div class="ai-icon-slot">'
-                    f'<img src="{tool_icon}" alt="{tool_name} logo" '
-                    f'class="ai-logo" '
-                    f'onerror="this.style.display=\'none\';'
-                    f'this.nextElementSibling.style.display=\'flex\';" />'
-                    f'<div id="{fallback_id}" class="ai-fallback" '
-                    f'style="display:none;background-color:{tool_color};'
-                    f'color:#ffffff;">{tool_initial}</div>'
-                    f'</div>'
-                    f'<p class="ai-name">{tool_name}</p>'
-                    f'</a>'
-                )
+        grid_html = (
+            '<div class="ai-grid">'
+            + "".join(cards)
+            + '</div>'
+        )
 
-                st.markdown(
-                    card_html,
-                    unsafe_allow_html=True
-                )
+        st.markdown(
+            grid_html,
+            unsafe_allow_html=True
+        )
 
     except Exception as error:
 
