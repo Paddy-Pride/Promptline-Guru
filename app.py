@@ -119,7 +119,7 @@ AI_TOOLS = [
     {
         "name": "MS Copilot",
         "url": "https://copilot.microsoft.com/",
-        "icon": "https://upload.wikimedia.org/wikipedia/commons/1/13/Microsoft_Copilot_Icon.svg",
+        "icon": "https://cdn.jsdelivr.net/npm/@thesvg/icons/icons/microsoft-copilot-legacy.svg",
         "color": "#258FFA",
         "initial": "M"
     }
@@ -337,38 +337,26 @@ st.markdown("""
     }
 
     /* AUDIO INPUT - FORCE CENTERED BUTTON */
-
-    [data-testid="stAudioInput"] {
+    [data-testid="stAudioInput"],
+    [data-testid="stAudioInput"] > div,
+    [data-testid="stAudioInput"] > div > div,
+    [data-testid="stAudioInput"] > div > div > div {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
         width: 56px !important;
         min-width: 56px !important;
         max-width: 56px !important;
-
         height: 56px !important;
         min-height: 56px !important;
         max-height: 56px !important;
-
-        margin: 0 !important;
-        padding: 0 !important;
-
         overflow: visible !important;
-
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        flex-direction: column !important;
-    }
-
-    [data-testid="stAudioInput"] > div,
-    [data-testid="stAudioInput"] > div > div {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
         gap: 0 !important;
     }
 
+    /* Hide the label/spacer div that Streamlit renders above the button */
     [data-testid="stAudioInput"] > div > div:first-child {
         display: none !important;
     }
@@ -377,41 +365,21 @@ st.markdown("""
         width: 52px !important;
         min-width: 52px !important;
         max-width: 52px !important;
-
         height: 52px !important;
         min-height: 52px !important;
         max-height: 52px !important;
-
         border-radius: 50% !important;
-
-        background: linear-gradient(
-            145deg,
-            #FFE45C,
-            #FFD500
-        ) !important;
-
+        background: linear-gradient(145deg, #FFE45C, #FFD500) !important;
         border: 2px solid #171717 !important;
         color: #111 !important;
-
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-
         margin: 0 auto !important;
         padding: 0 !important;
-
         position: relative !important;
-        left: 0 !important;
-        right: 0 !important;
-
-        box-shadow:
-            0 5px 14px rgba(0, 0, 0, 0.16),
-            inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
-
-        transition:
-            transform 160ms ease,
-            background 160ms ease,
-            box-shadow 160ms ease !important;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.7) !important;
+        transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease !important;
     }
 
     [data-testid="stAudioInput"] button:hover {
@@ -616,6 +584,18 @@ st.markdown("""
 
         [data-testid="stChatInput"] {
             min-height: 48px !important;
+        }
+
+        [data-testid="stAudioInput"],
+        [data-testid="stAudioInput"] > div,
+        [data-testid="stAudioInput"] > div > div,
+        [data-testid="stAudioInput"] > div > div > div {
+            width: 48px !important;
+            min-width: 48px !important;
+            max-width: 48px !important;
+            height: 48px !important;
+            min-height: 48px !important;
+            max-height: 48px !important;
         }
 
         [data-testid="stAudioInput"] button {
