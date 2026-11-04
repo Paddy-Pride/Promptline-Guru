@@ -31,7 +31,7 @@ st.markdown("""
     .block-container { 
         padding-top: 2vh !important; 
         padding-bottom: 10vh !important; 
-        max-width: 850px !important;
+        max-width: 800px !important;
         margin: 0 auto !important;
     }
     
@@ -39,8 +39,8 @@ st.markdown("""
     .block-container > div:first-child { 
         padding: 2.5rem; 
         background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
         border-radius: 24px; 
         border: 1px solid rgba(255, 255, 255, 0.9);
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -66,54 +66,11 @@ st.markdown("""
 
     /* Typewriter Box */
     .typewriter-container {
-        background: rgba(255, 255, 255, 0.95); border: 2px solid #FFD500;
+        background: rgba(255, 255, 255, 0.9); border: 2px solid #FFD500;
         border-radius: 10px; padding: 6px 15px; margin-bottom: 1rem;
         display: block; width: fit-content; min-width: 100%; box-sizing: border-box;
     }
     .typewriter-text { color: #000; font-weight: 800; font-size: 0.85rem; font-family: monospace; text-transform: uppercase; margin: 0; }
-
-    /* --- PERFECT CHAT BOX & AUDIO ALIGNMENT --- */
-    div[data-testid="stHorizontalBlock"] { 
-        align-items: center !important; 
-        gap: 0.5rem !important; 
-    }
-
-    /* Chat Input */
-    [data-testid="stChatInput"] {
-        background-color: rgba(255, 255, 255, 0.95) !important;
-        border: 2px solid #FFD500 !important;
-        border-radius: 30px !important;
-        padding: 6px 12px !important;
-        min-height: 52px !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
-    [data-testid="stChatInput"]:focus-within { border-color: #FF9900 !important; }
-
-    /* Audio Button - Force Perfect Circle & Hide Extra UI */
-    [data-testid="stAudioInput"] { 
-        width: 52px !important;
-        height: 52px !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-    }
-    [data-testid="stAudioInput"] > div > div:first-child { display: none !important; }
-    [data-testid="stAudioInput"] button {
-        border-radius: 50% !important;
-        background-color: #FFD500 !important;
-        border: 2px solid #000 !important;
-        width: 52px !important;
-        height: 52px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-        color: #000 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    [data-testid="stAudioInput"] button:hover { background-color: #FF9900 !important; color: #fff !important; }
-    [data-testid="stAudioInput"] button svg { width: 22px !important; height: 22px !important; }
 
     /* Generate Button */
     .stButton > button { 
@@ -243,34 +200,65 @@ components.html("""
 
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
-# --- CHAT BOX & AUDIO LAYOUT ---
-# 10:1 ratio keeps the audio button snug against the chat input
-col1, col2 = st.columns([10, 1])
+# Custom HTML Chat Box (WhatsApp Style)
+# The text is captured by a hidden text_area, so no page reload issues.
+chat_box_html = """
+<div style="display: flex; align-items: center; background: rgba(255,255,255,0.95); border: 2px solid #FFD500; border-radius: 30px; padding: 8px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 1rem;">
+    <label style="cursor: pointer; display: flex; align-items: center; margin-right: 10px;">
+        <input type="file" style="display: none;" accept=".pdf,.txt,.md,.csv">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+    </label>
+    <input type="text" id="hidden_chat_input" placeholder="Type your request here..." style="flex-grow: 1; border: none; background: transparent; outline: none; font-size: 1rem;" onkeypress="handleEnter(event)">
+    <button onclick="submitChat()" style="background: #FFD500; border: 2px solid #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 10px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+    </button>
+</div>
 
-with col1:
-    chat_val = st.chat_input("Type your request here...", accept_file=True, file_type=["txt", "md", "csv", "pdf"])
-    if chat_val:
-        if chat_val.text:
-            st.session_state["saved_prompt"] = chat_val.text
-        if chat_val.files:
-            for f in chat_val.files:
-                st.session_state["saved_prompt"] = extract_file_text(f)
+<script>
+    function handleEnter(e) {
+        if (e.key === "Enter") submitChat();
+    }
+    function submitChat() {
+        const val = document.getElementById("hidden_chat_input").value;
+        if (val.trim() !== "") {
+            // Send to Streamlit's hidden text input
+            window.parent.document.querySelector('input[aria-label="hidden_sync"]').value = val;
+            window.parent.document.querySelector('input[aria-label="hidden_sync"]').dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+</script>
+"""
+components.html(chat_box_html, height=80)
 
-with col2:
-    audio_val = st.audio_input("", label_visibility="collapsed")
-    if audio_val is not None:
-        with st.spinner("Transcribing..."):
-            try:
-                v_txt = client.audio.transcriptions.create(
-                    file=("req.wav", audio_val.getvalue()),
-                    model="whisper-large-v3",
-                    language=GROQ_LANGS[lang_name],
-                    response_format="text",
-                )
-                st.session_state["saved_prompt"] = translate_to_english(v_txt)
-                st.toast("Voice captured!")
-            except Exception as e:
-                st.error("Mic failed.")
+# Hidden sync input to bridge custom HTML to Streamlit Python
+sync_val = st.text_input("hidden_sync", label_visibility="hidden", placeholder="", key="sync")
+if sync_val:
+    st.session_state["saved_prompt"] = sync_val
+    st.session_state["sync"] = "" # Clear it
+
+# Hidden native file uploader (triggered by HTML paperclip if needed, but safe here)
+with st.expander("Attach File or Voice", expanded=False):
+    c1, c2 = st.columns(2)
+    with c1:
+        uploaded_file = st.file_uploader("Upload File", type=["txt", "md", "csv", "pdf"], label_visibility="collapsed")
+        if uploaded_file:
+            st.session_state["saved_prompt"] = extract_file_text(uploaded_file)
+            st.caption("✅ File attached.")
+    with c2:
+        audio_val = st.audio_input("Record Voice", label_visibility="collapsed")
+        if audio_val is not None:
+            with st.spinner("Transcribing..."):
+                try:
+                    v_txt = client.audio.transcriptions.create(
+                        file=("req.wav", audio_val.getvalue()),
+                        model="whisper-large-v3",
+                        language=GROQ_LANGS[lang_name],
+                        response_format="text",
+                    )
+                    st.session_state["saved_prompt"] = translate_to_english(v_txt)
+                    st.caption("✅ Voice captured.")
+                except Exception as e:
+                    st.error("Mic failed.")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
