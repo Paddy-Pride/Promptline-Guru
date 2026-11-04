@@ -14,28 +14,46 @@ st.markdown("""
     /* Global Theme */
     html, body, [class*="css"] { font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif; }
     
-    /* Background: Energetic runner image with a vibrant gradient overlay */
+    /* Background: Energetic runner image with vibrant MTN overlay */
     .stApp { 
         background-image: 
-            linear-gradient(135deg, rgba(255, 213, 0, 0.4), rgba(255, 153, 0, 0.3)),
+            linear-gradient(135deg, rgba(255, 213, 0, 0.45), rgba(255, 153, 0, 0.35)),
             url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=2070&auto=format&fit=crop');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
     }
     
-    /* Glassmorphism Container */
+    /* Glassmorphism Main Container */
     .block-container { 
         padding: 3rem 2.5rem; 
-        max-width: 850px; 
-        background: rgba(255, 255, 255, 0.65); /* Frosted glass */
-        backdrop-filter: blur(16px); /* The glass blur effect */
+        max-width: 900px; 
+        background: rgba(255, 255, 255, 0.70);
+        backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border-radius: 28px; 
         border: 1px solid rgba(255, 255, 255, 0.8);
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         margin-top: 3rem;
         margin-bottom: 3rem;
+    }
+
+    /* Glassmorphism Sidebar (Left Margin) */
+    [data-testid="stSidebar"] {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+        color: #000000;
+        font-weight: 900;
+    }
+    [data-testid="stSidebar"] .stSelectbox label {
+        color: #111111 !important;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 0.85rem;
     }
 
     /* App Name Tag */
@@ -66,37 +84,30 @@ st.markdown("""
     h1 .highlight { color: #FF9900; }
     .subtitle { color: #333333; font-size: 1.05rem; margin-top: 0.5rem; margin-bottom: 2rem; font-weight: 700; }
     
-    /* Card Titles */
-    .card-title { 
-        color: #000000; 
-        font-weight: 900; 
-        font-size: 1rem; 
-        margin-bottom: 0.5rem; 
-        text-transform: uppercase; 
-        border-left: 4px solid #FF9900; 
-        padding-left: 10px;
+    /* Chat Input Customization */
+    [data-testid="stChatInput"] {
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        border: 2px solid #FFD500 !important;
+        border-radius: 20px !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    [data-testid="stChatInput"]:focus-within {
+        border-color: #FF9900 !important;
+        box-shadow: 0 0 0 3px rgba(255,153,0,0.2) !important;
     }
 
-    /* Input Fields (Also slightly glassy) */
-    .stTextArea textarea { 
-        background-color: rgba(255, 255, 255, 0.8) !important; 
-        border-radius: 16px; 
-        border: 1px solid rgba(200, 200, 200, 0.5); 
-        color: #000000 !important;
-        font-size: 1.05rem; 
-        backdrop-filter: blur(4px);
+    /* Audio Input Customization */
+    [data-testid="stAudioInput"] {
+        background-color: transparent !important;
+        padding: 0;
     }
-    .stTextArea textarea:focus { border-color: #FF9900; box-shadow: 0 0 0 3px rgba(255,153,0,0.2); }
-    
-    /* Dropdowns */
-    .stSelectbox > div > div { 
-        background-color: rgba(255, 255, 255, 0.8) !important; 
-        border: 1px solid rgba(200, 200, 200, 0.5); 
-        border-radius: 12px; 
-        color: #000000 !important;
-        font-weight: 700;
+    [data-testid="stAudioInput"] button {
+        border-radius: 50% !important;
+        background-color: #FFD500 !important;
+        color: #000 !important;
+        border: 2px solid #000 !important;
     }
-    
+
     /* Action Button */
     .stButton > button { 
         background-color: #FFD500; 
@@ -120,7 +131,7 @@ st.markdown("""
     
     /* AI Tool Buttons */
     .stLinkButton > a { 
-        background-color: rgba(255, 255, 255, 0.7); 
+        background-color: rgba(255, 255, 255, 0.8); 
         color: #000000; 
         border: 1px solid rgba(200, 200, 200, 0.8); 
         border-radius: 30px; 
@@ -139,7 +150,7 @@ st.markdown("""
         color: #000000;
     }
 
-    /* Output Code Block (Darker glass to stand out) */
+    /* Output Code Block */
     .stCodeBlock pre { 
         background: rgba(20, 20, 20, 0.95) !important; 
         color: #FFD500 !important; 
@@ -213,78 +224,89 @@ def extract_file_text(f):
         return text
     return data.decode("utf-8", errors="replace")
 
-# ========== UI ==========
-# Name brought back to the top
+# ========== Sidebar (Left Margin) Parameters ==========
+with st.sidebar:
+    st.markdown("<h2 style='text-align: center;'>Settings</h2>", unsafe_allow_html=True)
+    st.markdown("---")
+    domain = st.selectbox("Domain", list(DOMAINS.keys()))
+    tone = st.selectbox("Tone", ["Professional", "Neutral", "Persuasive", "Instructional"])
+    depth = st.selectbox("Depth", ["Concise", "Standard", "Detailed", "Exhaustive"], index=1)
+    st.markdown("---")
+    
+    lang_name = st.selectbox("Audio Language", list(GROQ_LANGS.keys()), index=0)
+    st.caption("Note: For Leb Lango, please type instead. Whisper does not support it directly.")
+
+# ========== UI Main ==========
 st.markdown('<div class="plg-tag">PROMPTLINE GURU</div>', unsafe_allow_html=True)
 st.markdown('<h1>Prompt Better.<br>Build <span class="highlight">Faster.</span></h1>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
-st.markdown('<div class="card-title">1. Describe Your Goal</div>', unsafe_allow_html=True)
-user_text = st.text_area(
-    "Type your request",
-    placeholder="e.g., Write a grant proposal for a rural health clinic, including a budget breakdown...",
-    height=120,
-    label_visibility="collapsed",
-)
+# Integrated Chat Box + Audio Recorder
+st.markdown("**Your Request**")
+st.caption("Use the paperclip to upload a document, or the microphone to speak.")
 
-col_up, col_au = st.columns(2)
+col_chat, col_audio = st.columns([4, 1])
 
-with col_up:
-    st.markdown('<div class="card-title">Or Upload File</div>', unsafe_allow_html=True)
-    uploaded = st.file_uploader("PDF or TXT", type=["txt", "md", "csv", "pdf"], label_visibility="collapsed")
-    uploaded_text = ""
-    if uploaded:
-        uploaded_text = extract_file_text(uploaded)
-        st.caption("✅ Loaded: " + uploaded.name)
+with col_chat:
+    # Accept file=True adds the upload icon directly inside the chat box
+    chat_val = st.chat_input("Type your request here...", accept_file=True, file_type=["txt", "md", "csv", "pdf"])
 
-with col_au:
-    st.markdown('<div class="card-title">Or Speak</div>', unsafe_allow_html=True)
-    lang_name = st.selectbox("Audio language", list(GROQ_LANGS.keys()), index=0, label_visibility="collapsed")
-    audio_value = st.audio_input("Record", label_visibility="collapsed")
-    voice_text = ""
-    if audio_value is not None:
-        with st.spinner("Transcribing..."):
-            try:
-                voice_text = client.audio.transcriptions.create(
-                    file=("req.wav", audio_value.getvalue()),
-                    model="whisper-large-v3",
-                    language=GROQ_LANGS[lang_name],
-                    response_format="text",
-                )
-                st.caption("✅ Transcribed: " + voice_text[:30] + "...")
-            except Exception as e:
-                st.error("Transcription failed: " + str(e))
-    st.caption("Note: For Leb Lango, please type instead. Whisper does not support it directly.")
+with col_audio:
+    # Small audio recorder acting as the mic icon
+    audio_value = st.audio_input("Speak", label_visibility="collapsed")
 
-st.markdown("<hr>", unsafe_allow_html=True)
+# Process Inputs
+final_text = ""
+uploaded_text = ""
+voice_text = ""
 
-st.markdown('<div class="card-title">2. Set Parameters</div>', unsafe_allow_html=True)
-c1, c2, c3 = st.columns(3)
-with c1: domain = st.selectbox("Domain", list(DOMAINS.keys()))
-with c2: tone = st.selectbox("Tone", ["Professional", "Neutral", "Persuasive", "Instructional"])
-with c3: depth = st.selectbox("Depth", ["Concise", "Standard", "Detailed", "Exhaustive"], index=1)
+if chat_val:
+    if chat_val.text:
+        final_text = chat_val.text
+    if chat_val.files:
+        for f in chat_val.files:
+            uploaded_text += extract_file_text(f)
 
-# Generate Button
+if audio_value is not None:
+    with st.spinner("Transcribing audio..."):
+        try:
+            voice_text = client.audio.transcriptions.create(
+                file=("req.wav", audio_value.getvalue()),
+                model="whisper-large-v3",
+                language=GROQ_LANGS[lang_name],
+                response_format="text",
+            )
+            st.caption("✅ Transcribed: " + voice_text[:50] + "...")
+        except Exception as e:
+            st.error("Transcription failed: " + str(e))
+
+st.markdown("<br>", unsafe_allow_html=True)
+
 if st.button("GENERATE PROMPT", key="gen"):
-    final = user_text.strip() or uploaded_text.strip()
-    if not final and voice_text:
+    # Determine which input to use
+    final_input = final_text.strip() or uploaded_text.strip()
+    
+    if not final_input and voice_text:
         with st.spinner("Translating..."):
-            final = translate_to_english(voice_text)
-    if not final:
-        st.warning("Please provide a request first.")
+            final_input = translate_to_english(voice_text)
+            
+    if not final_input:
+        st.warning("Please type a request, upload a file, or record audio first.")
         st.stop()
 
-    with st.spinner("Forging..."):
-        prompt = optimize_prompt(final, domain, tone, depth)
+    with st.spinner("Forging your prompt..."):
+        prompt = optimize_prompt(final_input, domain, tone, depth)
 
-    st.markdown('<div class="card-title" style="margin-top: 2rem;">3. Your Professional Prompt</div>', unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True)
+    st.markdown('<div class="card-title">Your Professional Prompt</div>', unsafe_allow_html=True)
     st.code(prompt, language="markdown")
     st.caption("Copy the prompt above using the icon at the top right of the black box.")
 
     st.markdown("<hr>", unsafe_allow_html=True)
-    st.markdown('<div class="card-title">4. Open & Paste</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card-title">Open & Paste</div>', unsafe_allow_html=True)
     st.caption("Click a tool below to open it in a new tab. Paste the prompt to generate your result.")
 
+    # Render AI Tools
     for row_start in range(0, len(AI_TOOLS), 4):
         row_tools = AI_TOOLS[row_start:row_start + 4]
         cols = st.columns(len(row_tools))
