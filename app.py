@@ -10,10 +10,11 @@ client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 st.set_page_config(page_title="Promptline Guru", page_icon=None, layout="wide")
 
-# Custom CSS to compress layout to fit landscape, hide clutter, and style MTN Pulse
 st.markdown("""
 <style>
+    /* Global Reset */
     html, body, [class*="css"] { font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif; }
+    .block-container { padding-top: 1rem !important; padding-bottom: 1rem !important; }
     
     /* Energetic Runner Background */
     .stApp { 
@@ -26,7 +27,7 @@ st.markdown("""
     }
     
     /* Compressed Glassmorphism Container */
-    .block-container { 
+    .block-container > div:first-child { 
         padding: 1.5rem 2rem 1.5rem 2rem; 
         max-width: 850px; 
         background: rgba(255, 255, 255, 0.75);
@@ -35,86 +36,105 @@ st.markdown("""
         border-radius: 24px; 
         border: 1px solid rgba(255, 255, 255, 0.8);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        margin-top: 1rem;
+        margin: 0 auto;
     }
 
     /* Sidebar */
-    [data-testid="stSidebar"] {
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(20px);
-    }
+    [data-testid="stSidebar"] { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); }
 
     /* App Name */
     .plg-tag { 
         display: inline-block; background: #FFD500; color: #000; 
-        font-weight: 900; font-size: 0.85rem; padding: 0.3rem 1rem; 
-        border-radius: 20px; letter-spacing: 0.1em; margin-bottom: 0.5rem; 
+        font-weight: 900; font-size: 0.8rem; padding: 0.25rem 0.8rem; 
+        border-radius: 20px; letter-spacing: 0.1em; margin-bottom: 0.4rem; 
         border: 2px solid #000; text-transform: uppercase;
     }
 
     /* Typography */
-    h1 { font-size: 2.2rem; font-weight: 900; color: #111; line-height: 1.1; margin-bottom: 0; margin-top: 0; text-transform: uppercase; }
+    h1 { font-size: 2rem; font-weight: 900; color: #111; line-height: 1.1; margin-bottom: 0; margin-top: 0; text-transform: uppercase; }
     h1 .highlight { color: #FF9900; }
-    .subtitle { color: #333; font-size: 1rem; margin-top: 0.3rem; margin-bottom: 0.8rem; font-weight: 700; }
+    .subtitle { color: #333; font-size: 0.9rem; margin-top: 0.2rem; margin-bottom: 0.5rem; font-weight: 700; }
 
     /* Typewriter */
     .typewriter-container {
         background: rgba(255, 255, 255, 0.9); border: 2px solid #FFD500;
-        border-radius: 12px; padding: 6px 15px; margin-bottom: 1rem;
-        display: inline-block; min-width: 300px;
+        border-radius: 10px; padding: 4px 12px; margin-bottom: 0.8rem;
+        display: inline-block; min-width: 250px;
     }
-    .typewriter-text { color: #000; font-weight: 800; font-size: 0.9rem; font-family: monospace; text-transform: uppercase; margin: 0; }
+    .typewriter-text { color: #000; font-weight: 800; font-size: 0.8rem; font-family: monospace; text-transform: uppercase; margin: 0; }
 
-    /* Make Chat Input visually blend into the WhatsApp style */
+    /* --- CHAT BOX ALIGNMENT --- */
+    /* The parent column of the chat input */
+    div[data-testid="stHorizontalBlock"] > div:nth-child(1) {
+        padding-right: 5px; /* Tiny gap between text box and mic */
+    }
+    div[data-testid="stHorizontalBlock"] > div:nth-child(2) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* The Chat Input itself */
     [data-testid="stChatInput"] {
         background-color: rgba(255, 255, 255, 0.95) !important;
         border: 2px solid #FFD500 !important;
         border-radius: 30px !important;
-        padding: 5px 15px !important;
+        padding: 4px 10px !important;
+        min-height: 48px !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
     [data-testid="stChatInput"]:focus-within { border-color: #FF9900 !important; }
-
-    /* Make Audio Input look like a mic button */
+    
+    /* The Audio Input (Mic Button) */
     [data-testid="stAudioInput"] {
-        margin-top: 5px;
+        margin: 0 !important;
+        padding: 0 !important;
     }
     [data-testid="stAudioInput"] button {
         border-radius: 50% !important;
         background-color: #FFD500 !important;
         border: 2px solid #000 !important;
-        width: 45px !important;
-        height: 45px !important;
+        width: 48px !important;
+        height: 48px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
     }
+    [data-testid="stAudioInput"] button:hover { background-color: #FF9900 !important; color: #fff !important; }
+    [data-testid="stAudioInput"] button svg { width: 20px !important; height: 20px !important; }
 
     /* Generate Button */
     .stButton > button { 
         background-color: #FFD500; color: #000; border: 2px solid #000; 
-        border-radius: 40px; font-weight: 900; text-transform: uppercase;
-        padding: 0.6rem 2rem; font-size: 1rem; width: 100%; margin-top: 0.5rem;
+        border-radius: 30px; font-weight: 900; text-transform: uppercase;
+        padding: 0.5rem 1.5rem; font-size: 0.95rem; width: 100%; margin-top: 0.5rem;
+        height: 45px;
     }
     .stButton > button:hover { background-color: #FF9900; color: #FFF; }
     
-    /* AI Tool Cards */
+    /* AI Tool Cards Grid */
     .ai-card { 
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         background-color: rgba(255, 255, 255, 0.95); border: 2px solid #E0E0E0; 
-        border-radius: 16px; padding: 0.8rem 0.5rem; text-decoration: none; color: #000; 
-        transition: all 0.2s; height: 100%; margin-bottom: 10px;
+        border-radius: 12px; padding: 0.5rem 0.3rem; text-decoration: none; color: #000; 
+        transition: all 0.2s; height: 100%; margin-bottom: 8px;
     }
-    .ai-card:hover { border-color: #FFD500; transform: translateY(-3px); }
-    .ai-logo { width: 32px; height: 32px; margin-bottom: 6px; object-fit: contain; }
-    .ai-name { font-weight: 800; font-size: 0.75rem; text-align: center; margin: 0; }
+    .ai-card:hover { border-color: #FFD500; transform: translateY(-2px); }
+    .ai-logo { width: 24px; height: 24px; margin-bottom: 4px; object-fit: contain; }
+    .ai-name { font-weight: 800; font-size: 0.65rem; text-align: center; margin: 0; }
     .ai-fallback { 
-        width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        font-weight: 900; font-size: 1.1rem; color: #FFF; margin-bottom: 6px;
+        width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-weight: 900; font-size: 0.9rem; color: #FFF; margin-bottom: 4px;
     }
 
     /* Output Code Block */
     .stCodeBlock pre { 
         background: rgba(20, 20, 20, 0.95) !important; color: #FFD500 !important; 
-        border-radius: 16px; border: 2px solid rgba(255, 213, 0, 0.5); font-size: 0.95rem;
+        border-radius: 12px; border: 2px solid rgba(255, 213, 0, 0.5); font-size: 0.85rem;
+        padding: 10px !important;
     }
-    hr { border-color: rgba(0,0,0,0.1); margin: 1rem 0; }
+    hr { border-color: rgba(0,0,0,0.1); margin: 0.8rem 0; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -208,20 +228,16 @@ components.html("""
         setTimeout(ty, s);
     })();
 </script>
-""", height=50)
+""", height=40)
 
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
-# --- THE EXACT CHAT BOX LAYOUT ---
-# st.chat_input gives you the text box, paperclip (upload), and arrow natively.
-# st.audio_input sits right beside it as the microphone.
-col1, col2 = st.columns([6, 1])
+# --- WHATSAPP CHAT BOX LAYOUT ---
+# Column ratios: 7 for chat input, 1 for mic
+col1, col2 = st.columns([7, 1])
 
 with col1:
-    # Native chat input handles text, file uploads, and the active arrow perfectly.
     chat_val = st.chat_input("Type your request here...", accept_file=True, file_type=["txt", "md", "csv", "pdf"])
-    
-    # IMPORTANT FIX: We immediately save to session_state so the text doesn't vanish when Enter is pressed.
     if chat_val:
         if chat_val.text:
             st.session_state["saved_prompt"] = chat_val.text
@@ -230,7 +246,6 @@ with col1:
                 st.session_state["saved_prompt"] = extract_file_text(f)
 
 with col2:
-    # Visually acts as the mic button next to the chat box
     audio_val = st.audio_input("", label_visibility="collapsed")
     if audio_val is not None:
         with st.spinner("Transcribing..."):
@@ -242,9 +257,11 @@ with col2:
                     response_format="text",
                 )
                 st.session_state["saved_prompt"] = translate_to_english(v_txt)
-                st.success("Voice captured!")
+                st.toast("Voice captured!")
             except Exception as e:
                 st.error("Mic failed.")
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # --- GENERATION LOGIC ---
 if st.button("GENERATE PROMPT", key="gen"):
@@ -265,7 +282,7 @@ if st.button("GENERATE PROMPT", key="gen"):
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown('<div class="card-title">Open prompt with</div>', unsafe_allow_html=True)
 
-    # AI Logos with fallback
+    # AI Logos with Fallback (Aligned properly)
     cols = st.columns(4)
     for i, tool in enumerate(AI_TOOLS):
         col = cols[i % 4]
