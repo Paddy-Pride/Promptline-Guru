@@ -11,87 +11,96 @@ st.set_page_config(page_title="Promptline Guru", page_icon=None, layout="wide")
 
 st.markdown("""
 <style>
-    /* Global Theme: Deep Teal / Dark Mode */
+    /* Global Theme: Light, Energetic Pulse Vibe */
     html, body, [class*="css"] { font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif; }
-    .stApp { background-color: #1E2F30; /* MTN Pulse Dark Teal */ }
+    
+    /* Background Image with Light Overlay */
+    .stApp { 
+        background-image: 
+            linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)),
+            url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=2070&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
     
     /* Main Layout Container */
     .block-container { 
         padding-top: 2rem; 
         max-width: 900px; 
-        background-color: #111B1C; 
+        background-color: rgba(255, 255, 255, 0.95); 
         border-radius: 24px; 
         padding-bottom: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        border: 1px solid #2A3E40;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        border: 2px solid #FFD500;
         margin-top: 2rem;
     }
 
-    /* Typography: Heavy, Italicized, Punchy */
+    /* Typography: Punchy, Bold, Reflecting the App */
     h1 { 
-        font-size: 3rem; 
+        font-size: 2.8rem; 
         font-weight: 900; 
-        font-style: italic;
-        color: #FFFFFF; 
-        letter-spacing: -0.04em; 
-        line-height: 1.05;
+        color: #000000; 
+        letter-spacing: -0.03em; 
+        line-height: 1.1;
         margin-bottom: 0;
         text-transform: uppercase;
     }
-    h1 .highlight { color: #FFD500; /* Electric Yellow */ }
-    .subtitle { color: #A0B0B0; font-size: 1rem; margin-top: 0.5rem; margin-bottom: 2rem; font-weight: 600; }
+    h1 .highlight { color: #FF9900; /* Vibrant Orange */ }
+    .subtitle { color: #333333; font-size: 1.05rem; margin-top: 0.5rem; margin-bottom: 2rem; font-weight: 700; }
     
     /* Text Elements */
-    p, label, .stMarkdown { color: #E0E0E0 !important; }
-    .card-title { color: #FFD500; font-weight: 900; font-style: italic; font-size: 1.2rem; margin-bottom: 0.5rem; text-transform: uppercase;}
+    .card-title { color: #000000; font-weight: 900; font-size: 1.1rem; margin-bottom: 0.5rem; text-transform: uppercase; border-left: 5px solid #FFD500; padding-left: 10px;}
 
     /* Input Fields */
     .stTextArea textarea { 
-        background-color: #1A282A !important; 
+        background-color: #F8F9FA !important; 
         border-radius: 16px; 
-        border: 2px solid #3A5052; 
-        color: #FFFFFF !important;
-        font-size: 1rem; 
+        border: 2px solid #CCCCCC; 
+        color: #000000 !important;
+        font-size: 1.05rem; 
     }
-    .stTextArea textarea:focus { border-color: #FF9900; box-shadow: 0 0 0 3px rgba(255,153,0,0.2); }
+    .stTextArea textarea:focus { border-color: #FF9900; box-shadow: 0 0 0 4px rgba(255,153,0,0.2); }
     
     /* Dropdowns */
     .stSelectbox > div > div { 
-        background-color: #1A282A !important; 
-        border: 2px solid #3A5052; 
+        background-color: #F8F9FA !important; 
+        border: 2px solid #CCCCCC; 
         border-radius: 12px; 
-        color: #FFFFFF !important;
+        color: #000000 !important;
+        font-weight: 600;
     }
     
     /* The Main Action Button */
     .stButton > button { 
-        background-color: #FF9900; /* Vibrant Orange */
-        color: #FFFFFF; 
-        border: none; 
+        background-color: #FFD500; /* Electric Yellow */
+        color: #000000; 
+        border: 2px solid #000000; 
         border-radius: 40px; 
         font-weight: 900; 
-        font-style: italic;
         text-transform: uppercase;
         padding: 0.8rem 2rem; 
         font-size: 1.2rem; 
         width: 100%; 
-        transition: all 0.15s ease;
+        transition: all 0.2s ease;
         margin-top: 1rem;
     }
     .stButton > button:hover { 
-        background-color: #FFD500; /* Yellow on hover */
-        color: #111B1C; 
-        transform: scale(1.02);
+        background-color: #FF9900; /* Orange on hover */
+        color: #FFFFFF; 
+        border-color: #FF9900;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255,153,0,0.3);
     }
     
     /* AI Tool Link Buttons */
     .stLinkButton > a { 
-        background-color: #1A282A; 
-        color: #FFFFFF; 
-        border: 2px solid #3A5052; 
+        background-color: #FFFFFF; 
+        color: #000000; 
+        border: 2px solid #CCCCCC; 
         border-radius: 30px; 
         padding: 0.5rem 0.8rem; 
-        font-weight: 700; 
+        font-weight: 800; 
         font-size: 0.8rem; 
         text-decoration: none; 
         width: 100%; 
@@ -99,30 +108,26 @@ st.markdown("""
         transition: all 0.15s;
     }
     .stLinkButton > a:hover { 
-        background-color: #FF9900; 
-        border-color: #FF9900; 
-        color: #FFFFFF;
+        background-color: #FFD500; 
+        border-color: #000000; 
+        color: #000000;
     }
 
     /* Output Code Block */
     .stCodeBlock pre { 
-        background: #000000 !important; 
+        background: #1A1A1A !important; 
         color: #FFD500 !important; 
         border-radius: 16px; 
-        border: 2px solid #FFD500;
+        border: 3px solid #FFD500;
         font-size: 0.95rem;
     }
-
-    /* Expandable Note (Audio / Upload) */
-    .stAlert { 
-        background-color: #1A282A; 
-        border-radius: 16px; 
-        border-left: 6px solid #FFD500; 
-        color: #FFFFFF;
-    }
     
-    /* Subtle Dividers */
-    hr { border-color: #2A3E40; }
+    /* Dividers */
+    hr { border-color: #E0E0E0; margin: 2rem 0; }
+    
+    /* Expander / Captions */
+    .stAlert { border-radius: 12px; }
+    .stCaption { color: #555555 !important; font-weight: 600; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -187,22 +192,21 @@ def extract_file_text(f):
     return data.decode("utf-8", errors="replace")
 
 # ========== UI ==========
-st.markdown('<h1>Unleash the power of<br><span class="highlight">professional prompts</span></h1>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Type, upload, or speak. Let AI do the heavy lifting.</div>', unsafe_allow_html=True)
+st.markdown('<h1>Prompt Better.<br>Build <span class="highlight">Faster.</span></h1>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
-st.markdown('<div class="card-title">What do you want to create?</div>', unsafe_allow_html=True)
+st.markdown('<div class="card-title">1. Describe Your Goal</div>', unsafe_allow_html=True)
 user_text = st.text_area(
     "Type your request",
-    placeholder="e.g., write a proposal for a school computer lab...",
+    placeholder="e.g., Write a grant proposal for a rural health clinic, including a budget breakdown...",
     height=120,
     label_visibility="collapsed",
 )
 
-# Upload & Audio Grid
 col_up, col_au = st.columns(2)
 
 with col_up:
-    st.markdown('<div class="card-title">Upload Context</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card-title">Or Upload File</div>', unsafe_allow_html=True)
     uploaded = st.file_uploader("PDF or TXT", type=["txt", "md", "csv", "pdf"], label_visibility="collapsed")
     uploaded_text = ""
     if uploaded:
@@ -210,7 +214,7 @@ with col_up:
         st.caption("✅ Loaded: " + uploaded.name)
 
 with col_au:
-    st.markdown('<div class="card-title">Speak</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card-title">Or Speak</div>', unsafe_allow_html=True)
     lang_name = st.selectbox("Audio language", list(GROQ_LANGS.keys()), index=0, label_visibility="collapsed")
     audio_value = st.audio_input("Record", label_visibility="collapsed")
     voice_text = ""
@@ -230,7 +234,7 @@ with col_au:
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
-# Controls
+st.markdown('<div class="card-title">2. Set Parameters</div>', unsafe_allow_html=True)
 c1, c2, c3 = st.columns(3)
 with c1: domain = st.selectbox("Domain", list(DOMAINS.keys()))
 with c2: tone = st.selectbox("Tone", ["Professional", "Neutral", "Persuasive", "Instructional"])
@@ -249,15 +253,14 @@ if st.button("GENERATE PROMPT", key="gen"):
     with st.spinner("Forging..."):
         prompt = optimize_prompt(final, domain, tone, depth)
 
-    st.markdown('<div class="card-title" style="margin-top: 2rem;">Your Custom Prompt</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card-title" style="margin-top: 2rem;">3. Your Professional Prompt</div>', unsafe_allow_html=True)
     st.code(prompt, language="markdown")
-    st.caption("Copy the prompt above using the icon at the top right.")
+    st.caption("Copy the prompt above using the icon at the top right of the black box.")
 
     st.markdown("<hr>", unsafe_allow_html=True)
-    st.markdown('<div class="card-title">Open & Paste</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card-title">4. Open & Paste</div>', unsafe_allow_html=True)
     st.caption("Click a tool below to open it in a new tab. Paste the prompt to generate your result.")
 
-    # Render AI Tools in a single neat row
     for row_start in range(0, len(AI_TOOLS), 4):
         row_tools = AI_TOOLS[row_start:row_start + 4]
         cols = st.columns(len(row_tools))
