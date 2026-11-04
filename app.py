@@ -29,9 +29,9 @@ st.markdown("""
     }
     
     .block-container { 
-        padding-top: 0 !important; 
-        padding-bottom: 15vh !important; /* Pushes container up, leaves space down */
-        max-width: 750px !important; /* Smaller container */
+        padding-top: 4rem !important; /* Pushes content down away from the Streamlit header */
+        padding-bottom: 10vh !important; 
+        max-width: 750px !important; 
         margin: 0 auto !important;
     }
     
@@ -75,7 +75,7 @@ st.markdown("""
     /* --- FIX AUDIO AND CHAT ALIGNMENT --- */
     div[data-testid="stHorizontalBlock"] { 
         align-items: center !important; 
-        gap: 0.5rem !important; /* Keep them snug */
+        gap: 0.5rem !important; 
     }
 
     /* Chat Input */
@@ -89,15 +89,16 @@ st.markdown("""
     }
     [data-testid="stChatInput"]:focus-within { border-color: #FF9900 !important; }
     
-    /* Deep CSS to completely fix Audio Input Button */
+    /* Deep CSS to completely fix Audio Input Button and stop it from being chopped */
     [data-testid="stAudioInput"] { 
         width: 52px !important; 
         height: 52px !important;
         margin: 0 !important; 
         padding: 0 !important; 
-        overflow: hidden !important;
+        overflow: visible !important;
     }
-    /* Hide the text/dropdown wrapper */
+    /* Hide the invisible text/dropdown wrapper */
+    [data-testid="stAudioInput"] > div,
     [data-testid="stAudioInput"] > div > div:first-child {
         display: none !important;
     }
@@ -187,8 +188,7 @@ def optimize_prompt(user_input, domain, tone, depth):
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": "Domain: " + domain + "\nTone: " + tone + "\nDepth: " + depth + "\n\nRequest:\n" + user_input},
-        ],
-        temperature=0.4, max_tokens=1500,
+        ], temperature=0.4, max_tokens=1500,
     )
     return resp.choices[0].message.content
 
