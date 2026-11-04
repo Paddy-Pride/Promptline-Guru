@@ -185,7 +185,7 @@ st.markdown("""
 
     @media (max-width: 768px) {
         .block-container {
-            padding-top: 2rem !important;
+            padding-top: 4rem !important;
             padding-bottom: 10vh !important;
             padding-left: 1rem !important;
             padding-right: 1rem !important;
@@ -204,13 +204,13 @@ st.markdown("""
         .subtitle { font-size: 0.8rem !important; }
 
         .typewriter-container {
-            min-height: 48px !important;
+            min-height: 56px !important;
             padding: 8px 10px !important;
         }
 
         .typewriter-text {
             font-size: 0.68rem !important;
-            line-height: 1.5 !important;
+            line-height: 1.6 !important;
         }
 
         .stButton > button { height: 44px !important; font-size: 0.85rem !important; }
@@ -220,7 +220,7 @@ st.markdown("""
 
     @media (max-width: 480px) {
         .block-container {
-            padding-top: 1.5rem !important;
+            padding-top: 4rem !important;
             padding-left: 1rem !important;
             padding-right: 1rem !important;
             max-width: 750px !important;
@@ -237,13 +237,13 @@ st.markdown("""
         h1 { font-size: 1.3rem !important; }
 
         .typewriter-container {
-            min-height: 52px !important;
+            min-height: 60px !important;
             padding: 8px 10px !important;
         }
 
         .typewriter-text {
             font-size: 0.62rem !important;
-            line-height: 1.5 !important;
+            line-height: 1.6 !important;
         }
 
         [data-testid="stAudioInput"] button {
@@ -350,7 +350,7 @@ components.html("""
         setTimeout(ty, s);
     })();
 </script>
-""", height=48)
+""", height=88, scrolling=False)
 
 
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
