@@ -12,10 +12,10 @@ st.set_page_config(page_title="Promptline Guru", page_icon=None, layout="wide")
 
 st.markdown("""
 <style>
-    /* Global Reset & Flex Center */
+    /* Global Reset & Centering */
     html, body, [class*="css"] { font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif; }
     
-    /* Center the app container perfectly with space below */
+    /* Vertically center the app with plenty of bottom space */
     .stApp {
         display: flex;
         align-items: center;
@@ -29,21 +29,21 @@ st.markdown("""
     }
     
     .block-container { 
-        padding-top: 2vh !important; 
-        padding-bottom: 10vh !important; 
-        max-width: 850px !important;
+        padding-top: 0 !important; 
+        padding-bottom: 15vh !important; /* Pushes container up, leaves space down */
+        max-width: 750px !important; /* Smaller container */
         margin: 0 auto !important;
     }
     
-    /* Glassmorphism Container */
+    /* Small, Centered Glassmorphism Container */
     .block-container > div:first-child { 
-        padding: 2.5rem 2.5rem; 
+        padding: 2rem; 
         background: rgba(255, 255, 255, 0.7);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border-radius: 24px; 
+        border-radius: 20px; 
         border: 1px solid rgba(255, 255, 255, 0.9);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         margin: 0 auto;
         width: 100%;
     }
@@ -54,64 +54,77 @@ st.markdown("""
     /* App Name Tag */
     .plg-tag { 
         display: inline-block; background: #FFD500; color: #000; 
-        font-weight: 900; font-size: 0.8rem; padding: 0.3rem 1rem; 
-        border-radius: 20px; letter-spacing: 0.1em; margin-bottom: 0.6rem; 
+        font-weight: 900; font-size: 0.75rem; padding: 0.25rem 0.8rem; 
+        border-radius: 20px; letter-spacing: 0.1em; margin-bottom: 0.5rem; 
         border: 2px solid #000; text-transform: uppercase;
     }
 
     /* Typography */
-    h1 { font-size: 2.2rem; font-weight: 900; color: #111; line-height: 1.1; margin-bottom: 0; margin-top: 0; text-transform: uppercase; }
+    h1 { font-size: 1.9rem; font-weight: 900; color: #111; line-height: 1.1; margin-bottom: 0; margin-top: 0; text-transform: uppercase; }
     h1 .highlight { color: #FF9900; }
-    .subtitle { color: #333; font-size: 0.95rem; margin-top: 0.3rem; margin-bottom: 1rem; font-weight: 700; }
+    .subtitle { color: #333; font-size: 0.85rem; margin-top: 0.2rem; margin-bottom: 0.8rem; font-weight: 700; }
 
     /* Typewriter Box */
     .typewriter-container {
         background: rgba(255, 255, 255, 0.95); border: 2px solid #FFD500;
-        border-radius: 10px; padding: 5px 12px; margin-bottom: 1rem;
-        display: inline-block; min-width: 250px;
+        border-radius: 8px; padding: 4px 10px; margin-bottom: 0.8rem;
+        display: inline-block; min-width: 220px;
     }
-    .typewriter-text { color: #000; font-weight: 800; font-size: 0.8rem; font-family: monospace; text-transform: uppercase; margin: 0; }
+    .typewriter-text { color: #000; font-weight: 800; font-size: 0.75rem; font-family: monospace; text-transform: uppercase; margin: 0; }
 
-    /* --- CHAT BOX & AUDIO BUTTON ALIGNMENT --- */
-    div[data-testid="stHorizontalBlock"] { align-items: center !important; gap: 0rem !important; }
-    
-    /* Remove padding from the chat column to push audio closer */
-    div[data-testid="stHorizontalBlock"] > div:nth-child(1) { padding-right: 0px !important; }
+    /* --- FIX AUDIO AND CHAT ALIGNMENT --- */
+    div[data-testid="stHorizontalBlock"] { 
+        align-items: center !important; 
+        gap: 0.5rem !important; /* Keep them snug */
+    }
 
     /* Chat Input */
     [data-testid="stChatInput"] {
         background-color: rgba(255, 255, 255, 0.95) !important;
         border: 2px solid #FFD500 !important;
         border-radius: 30px !important;
-        padding: 8px 15px !important;
-        min-height: 54px !important;
+        padding: 6px 12px !important;
+        min-height: 52px !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
     [data-testid="stChatInput"]:focus-within { border-color: #FF9900 !important; }
     
-    /* Audio Input Button */
-    [data-testid="stAudioInput"] { margin: 0 !important; padding: 0 !important; }
+    /* Deep CSS to completely fix Audio Input Button */
+    [data-testid="stAudioInput"] { 
+        width: 52px !important; 
+        height: 52px !important;
+        margin: 0 !important; 
+        padding: 0 !important; 
+        overflow: hidden !important;
+    }
+    /* Hide the text/dropdown wrapper */
+    [data-testid="stAudioInput"] > div > div:first-child {
+        display: none !important;
+    }
+    /* Force the button to be a perfect circle */
     [data-testid="stAudioInput"] button {
         border-radius: 50% !important;
         background-color: #FFD500 !important;
         border: 2px solid #000 !important;
-        width: 54px !important;
-        height: 54px !important;
+        width: 52px !important;
+        height: 52px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
         color: #000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
     [data-testid="stAudioInput"] button:hover { background-color: #FF9900 !important; color: #fff !important; }
-    [data-testid="stAudioInput"] button svg { width: 24px !important; height: 24px !important; }
+    [data-testid="stAudioInput"] button svg { width: 22px !important; height: 22px !important; }
 
     /* Generate Button */
     .stButton > button { 
         background-color: #FFD500; color: #000; border: 2px solid #000; 
         border-radius: 30px; font-weight: 900; text-transform: uppercase;
-        padding: 0.6rem 1.5rem; font-size: 1rem; width: 100%; margin-top: 1rem;
-        height: 50px;
+        padding: 0.5rem 1.5rem; font-size: 0.95rem; width: 100%; margin-top: 0.8rem;
+        height: 48px;
     }
     .stButton > button:hover { background-color: #FF9900; color: #FFF; }
     
@@ -119,22 +132,22 @@ st.markdown("""
     .ai-card { 
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         background-color: rgba(255, 255, 255, 0.95); border: 2px solid #E0E0E0; 
-        border-radius: 12px; padding: 0.6rem 0.3rem; text-decoration: none; color: #000; 
+        border-radius: 12px; padding: 0.5rem 0.3rem; text-decoration: none; color: #000; 
         transition: all 0.2s; height: 100%; margin-bottom: 8px;
     }
     .ai-card:hover { border-color: #FFD500; transform: translateY(-2px); }
-    .ai-logo { width: 26px; height: 26px; margin-bottom: 6px; object-fit: contain; }
-    .ai-name { font-weight: 800; font-size: 0.7rem; text-align: center; margin: 0; }
+    .ai-logo { width: 24px; height: 24px; margin-bottom: 4px; object-fit: contain; }
+    .ai-name { font-weight: 800; font-size: 0.65rem; text-align: center; margin: 0; }
     .ai-fallback { 
-        width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        font-weight: 900; font-size: 0.95rem; color: #FFF; margin-bottom: 6px;
+        width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-weight: 900; font-size: 0.85rem; color: #FFF; margin-bottom: 4px;
     }
 
     /* Output Code Block */
     .stCodeBlock pre { 
         background: rgba(20, 20, 20, 0.95) !important; color: #FFD500 !important; 
-        border-radius: 12px; border: 2px solid rgba(255, 213, 0, 0.5); font-size: 0.85rem;
-        padding: 12px !important;
+        border-radius: 12px; border: 2px solid rgba(255, 213, 0, 0.5); font-size: 0.8rem;
+        padding: 10px !important;
     }
     hr { border-color: rgba(0,0,0,0.1); margin: 0.8rem 0; }
 </style>
@@ -152,7 +165,6 @@ DOMAINS = {
 
 GROQ_LANGS = {"English": "en", "Swahili": "sw", "French": "fr", "Arabic": "ar", "Portuguese": "pt", "Spanish": "es"}
 
-# Using -color variants from Lobe Icons
 AI_TOOLS = [
     {"name": "ChatGPT", "url": "https://chat.openai.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/openai-color.png", "color": "#10A37F", "initial": "C"},
     {"name": "Claude", "url": "https://claude.ai", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/claude-color.png", "color": "#D97757", "initial": "C"},
@@ -231,12 +243,11 @@ components.html("""
         setTimeout(ty, s);
     })();
 </script>
-""", height=45)
+""", height=40)
 
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
-# --- CHAT BOX & AUDIO LAYOUT ---
-# Adjusted column ratio to 10:1 for tight alignment
+# --- TIGHT CHAT BOX & AUDIO LAYOUT ---
 col1, col2 = st.columns([10, 1])
 
 with col1:
