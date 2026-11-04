@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+import streamlit.components.v1 as components
 from groq import Groq
 
 if "GROQ_API_KEY" in st.secrets:
@@ -14,7 +15,7 @@ st.markdown("""
     /* Global Theme */
     html, body, [class*="css"] { font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif; }
     
-    /* Background: Energetic runner image with vibrant MTN overlay */
+    /* Background */
     .stApp { 
         background-image: 
             linear-gradient(135deg, rgba(255, 213, 0, 0.45), rgba(255, 153, 0, 0.35)),
@@ -26,9 +27,9 @@ st.markdown("""
     
     /* Glassmorphism Main Container */
     .block-container { 
-        padding: 3rem 2.5rem; 
+        padding: 2rem 2.5rem; 
         max-width: 900px; 
-        background: rgba(255, 255, 255, 0.70);
+        background: rgba(255, 255, 255, 0.75);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border-radius: 28px; 
@@ -38,16 +39,12 @@ st.markdown("""
         margin-bottom: 3rem;
     }
 
-    /* Glassmorphism Sidebar (Left Margin) */
+    /* Glassmorphism Sidebar */
     [data-testid="stSidebar"] {
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border-right: 1px solid rgba(255, 255, 255, 0.6);
-    }
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
-        color: #000000;
-        font-weight: 900;
     }
     [data-testid="stSidebar"] .stSelectbox label {
         color: #111111 !important;
@@ -56,10 +53,34 @@ st.markdown("""
         font-size: 0.85rem;
     }
 
+    /* Marquee Container */
+    .marquee-container {
+        background: #FFD500;
+        border: 2px solid #000000;
+        border-radius: 30px;
+        padding: 8px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        margin-bottom: 1.5rem;
+    }
+    .marquee-text {
+        display: inline-block;
+        font-weight: 900;
+        font-size: 1rem;
+        color: #000000;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        animation: scroll-left 15s linear infinite;
+    }
+    @keyframes scroll-left {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+
     /* App Name Tag */
     .plg-tag { 
         display: inline-block; 
-        background: #FFD500; 
+        background: #FFFFFF; 
         color: #000000; 
         font-weight: 900; 
         font-size: 0.8rem; 
@@ -86,7 +107,7 @@ st.markdown("""
     
     /* Chat Input Customization */
     [data-testid="stChatInput"] {
-        background-color: rgba(255, 255, 255, 0.9) !important;
+        background-color: rgba(255, 255, 255, 0.95) !important;
         border: 2px solid #FFD500 !important;
         border-radius: 20px !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
@@ -96,11 +117,7 @@ st.markdown("""
         box-shadow: 0 0 0 3px rgba(255,153,0,0.2) !important;
     }
 
-    /* Audio Input Customization */
-    [data-testid="stAudioInput"] {
-        background-color: transparent !important;
-        padding: 0;
-    }
+    /* Audio Input */
     [data-testid="stAudioInput"] button {
         border-radius: 50% !important;
         background-color: #FFD500 !important;
@@ -129,11 +146,11 @@ st.markdown("""
         box-shadow: 0 5px 15px rgba(255,153,0,0.4);
     }
     
-    /* AI Tool Buttons */
+    /* AI Tool Link Buttons */
     .stLinkButton > a { 
-        background-color: rgba(255, 255, 255, 0.8); 
+        background-color: rgba(255, 255, 255, 0.9); 
         color: #000000; 
-        border: 1px solid rgba(200, 200, 200, 0.8); 
+        border: 2px solid #E0E0E0; 
         border-radius: 30px; 
         padding: 0.5rem 0.8rem; 
         font-weight: 800; 
@@ -142,7 +159,6 @@ st.markdown("""
         width: 100%; 
         text-align: center; 
         transition: all 0.15s;
-        backdrop-filter: blur(4px);
     }
     .stLinkButton > a:hover { 
         background-color: #FFD500; 
@@ -176,14 +192,15 @@ DOMAINS = {
 
 GROQ_LANGS = {"English": "en", "Swahili": "sw", "French": "fr", "Arabic": "ar", "Portuguese": "pt", "Spanish": "es"}
 
+# Direct, stable favicons for AI tools
 AI_TOOLS = [
-    {"name": "ChatGPT", "url": "https://chat.openai.com", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/openai.webp"},
-    {"name": "Claude", "url": "https://claude.ai", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/claude.webp"},
-    {"name": "Gemini", "url": "https://gemini.google.com", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/gemini.webp"},
-    {"name": "Grok", "url": "https://grok.com", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/grok.webp"},
-    {"name": "DeepSeek", "url": "https://chat.deepseek.com", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/deepseek.webp"},
-    {"name": "Copilot", "url": "https://copilot.microsoft.com", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/copilot.webp"},
-    {"name": "Perplexity", "url": "https://www.perplexity.ai", "icon": "https://unpkg.com/@lobehub/icons-static-avatar@latest/avatars/perplexity.webp"},
+    {"name": "ChatGPT", "url": "https://chat.openai.com", "icon": "https://chat.openai.com/favicon.ico"},
+    {"name": "Claude", "url": "https://claude.ai", "icon": "https://claude.ai/favicon.ico"},
+    {"name": "Gemini", "url": "https://gemini.google.com", "icon": "https://www.gstatic.com/lamda/images/gemini_favicon_f069958c85030f4b2761.ico"},
+    {"name": "Grok", "url": "https://grok.com", "icon": "https://grok.com/favicon.ico"},
+    {"name": "DeepSeek", "url": "https://chat.deepseek.com", "icon": "https://chat.deepseek.com/favicon.ico"},
+    {"name": "Copilot", "url": "https://copilot.microsoft.com", "icon": "https://copilot.microsoft.com/favicon.ico"},
+    {"name": "Perplexity", "url": "https://www.perplexity.ai", "icon": "https://www.perplexity.ai/favicon.ico"},
 ]
 
 META_SYSTEM = """You are a senior prompt engineer. Convert a rough request into a production-ready prompt.
@@ -224,7 +241,7 @@ def extract_file_text(f):
         return text
     return data.decode("utf-8", errors="replace")
 
-# ========== Sidebar (Left Margin) Parameters ==========
+# ========== Sidebar Settings ==========
 with st.sidebar:
     st.markdown("<h2 style='text-align: center;'>Settings</h2>", unsafe_allow_html=True)
     st.markdown("---")
@@ -232,12 +249,23 @@ with st.sidebar:
     tone = st.selectbox("Tone", ["Professional", "Neutral", "Persuasive", "Instructional"])
     depth = st.selectbox("Depth", ["Concise", "Standard", "Detailed", "Exhaustive"], index=1)
     st.markdown("---")
-    
     lang_name = st.selectbox("Audio Language", list(GROQ_LANGS.keys()), index=0)
     st.caption("Note: For Leb Lango, please type instead. Whisper does not support it directly.")
 
 # ========== UI Main ==========
 st.markdown('<div class="plg-tag">PROMPTLINE GURU</div>', unsafe_allow_html=True)
+
+# Marquee
+st.markdown("""
+<div class="marquee-container">
+    <div class="marquee-text">
+        INDUSTRY-GRADE PRODUCTION PROMPT ENGINEERING &nbsp;&nbsp;|&nbsp;&nbsp; 
+        A BETTER WAY TO WORK WITH GENERATIVE AI &nbsp;&nbsp;|&nbsp;&nbsp; 
+        SAVE TIME FROM FRUSTRATING AI OUTPUTS
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 st.markdown('<h1>Prompt Better.<br>Build <span class="highlight">Faster.</span></h1>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
@@ -245,28 +273,26 @@ st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate pr
 st.markdown("**Your Request**")
 st.caption("Use the paperclip to upload a document, or the microphone to speak.")
 
-col_chat, col_audio = st.columns([4, 1])
+col_chat, col_audio = st.columns([5, 1])
 
 with col_chat:
-    # Accept file=True adds the upload icon directly inside the chat box
-    chat_val = st.chat_input("Type your request here...", accept_file=True, file_type=["txt", "md", "csv", "pdf"])
+    # We store the chat input in session state so it doesn't vanish
+    chat_val = st.chat_input("Type your request here...", accept_file=True, file_type=["txt", "md", "csv", "pdf"], key="chat_input_key")
+    if chat_val:
+        st.session_state["saved_text"] = chat_val.text
+        st.session_state["saved_files"] = chat_val.files
 
 with col_audio:
-    # Small audio recorder acting as the mic icon
     audio_value = st.audio_input("Speak", label_visibility="collapsed")
 
-# Process Inputs
-final_text = ""
+# Process inputs
 uploaded_text = ""
 voice_text = ""
 
-if chat_val:
-    if chat_val.text:
-        final_text = chat_val.text
-    if chat_val.files:
-        for f in chat_val.files:
-            uploaded_text += extract_file_text(f)
-
+if "saved_files" in st.session_state and st.session_state["saved_files"]:
+    for f in st.session_state["saved_files"]:
+        uploaded_text += extract_file_text(f)
+        
 if audio_value is not None:
     with st.spinner("Transcribing audio..."):
         try:
@@ -283,8 +309,8 @@ if audio_value is not None:
 st.markdown("<br>", unsafe_allow_html=True)
 
 if st.button("GENERATE PROMPT", key="gen"):
-    # Determine which input to use
-    final_input = final_text.strip() or uploaded_text.strip()
+    # Retrieve from session state if the chat input was cleared
+    final_input = st.session_state.get("saved_text", "").strip() or uploaded_text.strip()
     
     if not final_input and voice_text:
         with st.spinner("Translating..."):
@@ -306,11 +332,14 @@ if st.button("GENERATE PROMPT", key="gen"):
     st.markdown('<div class="card-title">Open & Paste</div>', unsafe_allow_html=True)
     st.caption("Click a tool below to open it in a new tab. Paste the prompt to generate your result.")
 
-    # Render AI Tools
+    # Render AI Tools with fallback
     for row_start in range(0, len(AI_TOOLS), 4):
         row_tools = AI_TOOLS[row_start:row_start + 4]
         cols = st.columns(len(row_tools))
         for i, tool in enumerate(row_tools):
             with cols[i]:
-                st.image(tool["icon"], width=36)
+                try:
+                    st.image(tool["icon"], width=36)
+                except:
+                    st.markdown(f"**{tool['name'][0]}**")
                 st.link_button(tool["name"], tool["url"], use_container_width=True)
