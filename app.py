@@ -1,3 +1,4 @@
+
 import os
 import html
 import streamlit as st
@@ -6,7 +7,7 @@ from groq import Groq
 
 
 # =========================================================
-# PAGE CONFIGURATION AND API SETUP
+# PAGE CONFIGURATION
 # =========================================================
 
 st.set_page_config(
@@ -15,18 +16,20 @@ st.set_page_config(
     layout="wide"
 )
 
+
+# =========================================================
+# GROQ API CONFIGURATION
+# =========================================================
+
 try:
     GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "")
 except Exception:
     GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
 if not GROQ_API_KEY:
-    GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
-
-if not GROQ_API_KEY:
     st.error(
-        "Groq API key is missing. Add GROQ_API_KEY to your "
-        "Streamlit secrets or environment variables."
+        "GROQ_API_KEY is missing. Add it to your Streamlit "
+        "Cloud secrets or environment variables."
     )
     st.stop()
 
@@ -34,65 +37,7 @@ client = Groq(api_key=GROQ_API_KEY)
 
 
 # =========================================================
-# AI TOOLS
-# Defined before the rendering loop to prevent NameError.
-# =========================================================
-
-AI_TOOLS = [
-    {
-        "name": "ChatGPT",
-        "url": "https://chatgpt.com/",
-        "icon": "https://cdn.simpleicons.org/openai/412991",
-        "color": "#412991",
-        "initial": "C"
-    },
-    {
-        "name": "Claude",
-        "url": "https://claude.ai/",
-        "icon": "https://cdn.simpleicons.org/anthropic/D97757",
-        "color": "#D97757",
-        "initial": "C"
-    },
-    {
-        "name": "Gemini",
-        "url": "https://gemini.google.com/",
-        "icon": "https://cdn.simpleicons.org/googlegemini/8E75B2",
-        "color": "#8E75B2",
-        "initial": "G"
-    },
-    {
-        "name": "Grok",
-        "url": "https://grok.com/",
-        "icon": "https://cdn.simpleicons.org/x/000000",
-        "color": "#000000",
-        "initial": "G"
-    },
-    {
-        "name": "DeepSeek",
-        "url": "https://chat.deepseek.com/",
-        "icon": "https://cdn.simpleicons.org/deepseek/4D6BFE",
-        "color": "#4D6BFE",
-        "initial": "D"
-    },
-    {
-        "name": "Copilot",
-        "url": "https://copilot.microsoft.com/",
-        "icon": "https://cdn.simpleicons.org/microsoftcopilot/258FFA",
-        "color": "#258FFA",
-        "initial": "C"
-    },
-    {
-        "name": "Perplexity",
-        "url": "https://www.perplexity.ai/",
-        "icon": "https://cdn.simpleicons.org/perplexity/20B8CD",
-        "color": "#20B8CD",
-        "initial": "P"
-    }
-]
-
-
-# =========================================================
-# DOMAIN AND LANGUAGE SETTINGS
+# DOMAIN SETTINGS
 # =========================================================
 
 DOMAINS = {
@@ -120,6 +65,11 @@ DOMAINS = {
     ),
 }
 
+
+# =========================================================
+# AUDIO LANGUAGE SETTINGS
+# =========================================================
+
 GROQ_LANGS = {
     "English": "en",
     "Swahili": "sw",
@@ -131,17 +81,227 @@ GROQ_LANGS = {
 
 
 # =========================================================
+# AI TOOLS AND FULL-COLOUR LOGOS
+# =========================================================
+
+AI_TOOLS = [
+    {
+        "name": "ChatGPT",
+        "url": "https://chatgpt.com/",
+        "icon": (
+            "https://unpkg.com/@lobehub/icons-static-png@latest/"
+            "color/openai-color.png"
+        ),
+        "color": "#10A37F",
+        "initial": "C"
+    },
+    {
+        "name": "Claude",
+        "url": "https://claude.ai/",
+        "icon": (
+            "https://unpkg.com/@lobehub/icons-static-png@latest/"
+            "color/claude-color.png"
+        ),
+        "color": "#D97757",
+        "initial": "C"
+    },
+    {
+        "name": "Gemini",
+        "url": "https://gemini.google.com/",
+        "icon": (
+            "https://unpkg.com/@lobehub/icons-static-png@latest/"
+            "color/gemini-color.png"
+        ),
+        "color": "#4285F4",
+        "initial": "G"
+    },
+    {
+        "name": "Grok",
+        "url": "https://grok.com/",
+        "icon": (
+            "https://unpkg.com/@lobehub/icons-static-png@latest/"
+            "color/grok-color.png"
+        ),
+        "color": "#000000",
+        "initial": "G"
+    },
+    {
+        "name": "DeepSeek",
+        "url": "https://chat.deepseek.com/",
+        "icon": (
+            "https://unpkg.com/@lobehub/icons-static-png@latest/"
+            "color/deepseek-color.png"
+        ),
+        "color": "#4D6BFE",
+        "initial": "D"
+    },
+    {
+        "name": "Copilot",
+        "url": "https://copilot.microsoft.com/",
+        "icon": (
+            "https://unpkg.com/@lobehub/icons-static-png@latest/"
+            "color/copilot-color.png"
+        ),
+        "color": "#0078D4",
+        "initial": "C"
+    },
+    {
+        "name": "Perplexity",
+        "url": "https://www.perplexity.ai/",
+        "icon": (
+            "https://unpkg.com/@lobehub/icons-static-png@latest/"
+            "color/perplexity-color.png"
+        ),
+        "color": "#20808D",
+        "initial": "P"
+    }
+]
+
+
+# =========================================================
+# PROMPT ENGINEERING SYSTEM
+# =========================================================
+
+META_SYSTEM = """
+You are a senior prompt engineer.
+
+Convert a rough request into a production-ready prompt.
+
+Output ONLY the prompt.
+
+Structure:
+
+ROLE
+OBJECTIVE
+CONTEXT AND CONSTRAINTS
+INPUTS
+PROCESS
+OUTPUT FORMAT
+QUALITY BAR
+
+QUALITY BAR must contain concrete, checkable criteria.
+
+Do NOT answer the user's request.
+
+Resolve ambiguity with stated defaults.
+"""
+
+
+# =========================================================
+# PROMPT OPTIMIZATION FUNCTION
+# =========================================================
+
+def optimize_prompt(user_input, domain, tone, depth):
+
+    system = (
+        META_SYSTEM
+        + "\n\nDomain: "
+        + DOMAINS.get(domain, DOMAINS["General"])
+    )
+
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-120b",
+
+        messages=[
+            {
+                "role": "system",
+                "content": system
+            },
+            {
+                "role": "user",
+                "content": (
+                    "Domain: " + domain
+                    + "\nTone: " + tone
+                    + "\nDepth: " + depth
+                    + "\n\nRequest:\n" + user_input
+                )
+            }
+        ],
+
+        temperature=0.4,
+        max_tokens=1500
+    )
+
+    return response.choices[0].message.content
+
+
+# =========================================================
+# TRANSLATION FUNCTION
+# =========================================================
+
+def translate_to_english(text):
+
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-120b",
+
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "Translate to English. "
+                    "Output only the translation."
+                )
+            },
+            {
+                "role": "user",
+                "content": text
+            }
+        ],
+
+        temperature=0.1,
+        max_tokens=800
+    )
+
+    return response.choices[0].message.content.strip()
+
+
+# =========================================================
+# FILE TEXT EXTRACTION
+# =========================================================
+
+def extract_file_text(uploaded_file):
+
+    filename = uploaded_file.name.lower()
+    data = uploaded_file.getvalue()
+
+    if filename.endswith(".pdf"):
+
+        import fitz
+
+        document = fitz.open(
+            stream=data,
+            filetype="pdf"
+        )
+
+        extracted_text = "\n".join(
+            page.get_text()
+            for page in document
+        )
+
+        document.close()
+
+        return extracted_text
+
+    return data.decode(
+        "utf-8",
+        errors="replace"
+    )
+
+
+# =========================================================
 # CUSTOM CSS
 # =========================================================
 
 st.markdown("""
 <style>
 
-    /* GLOBAL STYLING */
+    /* GLOBAL FONT */
 
     html, body, [class*="css"] {
         font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif;
     }
+
+    /* BACKGROUND */
 
     .stApp {
         display: flex;
@@ -197,7 +357,7 @@ st.markdown("""
         backdrop-filter: blur(20px);
     }
 
-    /* BRANDING */
+    /* BRANDING TAG */
 
     .plg-tag {
         display: inline-block;
@@ -217,7 +377,7 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* TYPOGRAPHY */
+    /* MAIN HEADING */
 
     h1 {
         font-size: 1.9rem;
@@ -245,7 +405,7 @@ st.markdown("""
         font-weight: 700;
     }
 
-    /* TYPEWRITER */
+    /* TYPEWRITER BOX */
 
     .typewriter-container {
         background: rgba(255, 255, 255, 0.95);
@@ -361,7 +521,6 @@ st.markdown("""
         ) !important;
 
         color: #fff !important;
-
         transform: translateY(-2px);
 
         box-shadow:
@@ -415,6 +574,19 @@ st.markdown("""
         color: #FFF;
     }
 
+    /* OUTPUT CODE BLOCK */
+
+    .stCodeBlock pre {
+        background: rgba(20, 20, 20, 0.95) !important;
+        color: #FFD500 !important;
+
+        border-radius: 12px;
+        border: 2px solid rgba(255, 213, 0, 0.5);
+
+        font-size: 0.8rem;
+        padding: 10px !important;
+    }
+
     /* SECTION TITLES */
 
     .card-title {
@@ -424,90 +596,6 @@ st.markdown("""
         margin: 0.5rem 0;
     }
 
-    /* AI TOOL CARDS */
-
-    .ai-card {
-        display: flex;
-        flex-direction: column;
-
-        align-items: center;
-        justify-content: center;
-
-        background-color: rgba(255, 255, 255, 0.97);
-
-        border: 2px solid #E0E0E0;
-        border-radius: 14px;
-
-        padding: 14px 8px;
-
-        text-decoration: none !important;
-        color: #000 !important;
-
-        transition: all 0.2s ease;
-
-        min-height: 105px;
-        width: 100%;
-
-        margin-bottom: 8px;
-        box-sizing: border-box;
-    }
-
-    .ai-card:hover {
-        border-color: #FFD500;
-        transform: translateY(-3px);
-
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.09);
-    }
-
-    .ai-logo {
-        width: 40px;
-        height: 40px;
-
-        object-fit: contain;
-        display: block;
-
-        margin-bottom: 9px;
-    }
-
-    .ai-fallback {
-        width: 40px;
-        height: 40px;
-
-        border-radius: 50%;
-
-        align-items: center;
-        justify-content: center;
-
-        font-weight: 900;
-        font-size: 1.1rem;
-
-        margin-bottom: 9px;
-    }
-
-    .ai-name {
-        font-weight: 800;
-        font-size: 0.75rem;
-
-        text-align: center;
-        margin: 0;
-
-        color: #222;
-    }
-
-    /* OUTPUT CODE BLOCK */
-
-    .stCodeBlock pre {
-        background: rgba(20, 20, 20, 0.95) !important;
-        color: #FFD500 !important;
-
-        border-radius: 12px;
-
-        border: 2px solid rgba(255, 213, 0, 0.5);
-
-        font-size: 0.8rem;
-        padding: 10px !important;
-    }
-
     hr {
         border-color: rgba(0, 0, 0, 0.1);
         margin: 0.8rem 0;
@@ -515,136 +603,6 @@ st.markdown("""
 
 </style>
 """, unsafe_allow_html=True)
-
-
-# =========================================================
-# PROMPT ENGINEERING INSTRUCTIONS
-# =========================================================
-
-META_SYSTEM = """
-You are a senior prompt engineer.
-
-Convert a rough request into a production-ready prompt.
-
-Output ONLY the prompt.
-
-Structure:
-
-ROLE
-OBJECTIVE
-CONTEXT AND CONSTRAINTS
-INPUTS
-PROCESS
-OUTPUT FORMAT
-QUALITY BAR
-
-QUALITY BAR must contain concrete, checkable criteria.
-
-Do NOT answer the user's request.
-
-Resolve ambiguity with stated defaults.
-"""
-
-
-# =========================================================
-# PROMPT OPTIMIZATION
-# =========================================================
-
-def optimize_prompt(user_input, domain, tone, depth):
-
-    system = (
-        META_SYSTEM
-        + "\n\nDomain: "
-        + DOMAINS.get(domain, DOMAINS["General"])
-    )
-
-    response = client.chat.completions.create(
-        model="openai/gpt-oss-120b",
-
-        messages=[
-            {
-                "role": "system",
-                "content": system
-            },
-            {
-                "role": "user",
-                "content": (
-                    "Domain: " + domain
-                    + "\nTone: " + tone
-                    + "\nDepth: " + depth
-                    + "\n\nRequest:\n" + user_input
-                )
-            }
-        ],
-
-        temperature=0.4,
-        max_tokens=1500
-    )
-
-    return response.choices[0].message.content
-
-
-# =========================================================
-# TRANSLATION
-# =========================================================
-
-def translate_to_english(text):
-
-    response = client.chat.completions.create(
-        model="openai/gpt-oss-120b",
-
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "Translate to English. "
-                    "Output only the translation."
-                )
-            },
-            {
-                "role": "user",
-                "content": text
-            }
-        ],
-
-        temperature=0.1,
-        max_tokens=800
-    )
-
-    return response.choices[0].message.content.strip()
-
-
-# =========================================================
-# FILE TEXT EXTRACTION
-# =========================================================
-
-def extract_file_text(uploaded_file):
-
-    filename = uploaded_file.name.lower()
-    data = uploaded_file.getvalue()
-
-    if filename.endswith(".pdf"):
-
-        import fitz
-
-        document = fitz.open(
-            stream=data,
-            filetype="pdf"
-        )
-
-        extracted_text = "\n".join(
-            page.get_text()
-            for page in document
-        )
-
-        document.close()
-
-        return extracted_text
-
-    return data.decode(
-        "utf-8",
-        errors="replace"
-    )
 
 
 # =========================================================
@@ -717,15 +675,33 @@ st.markdown(
 # =========================================================
 
 components.html("""
-<div
-    class="typewriter-container"
-    style="margin-bottom:0px;"
->
-    <p
-        class="typewriter-text"
-        id="typewriter"
-    ></p>
+<div class="typewriter-container"
+     style="margin-bottom:0px;">
+
+    <p class="typewriter-text"
+       id="typewriter"></p>
+
 </div>
+
+<style>
+    .typewriter-container {
+        background: rgba(255,255,255,0.95);
+        border: 2px solid #FFD500;
+        border-radius: 8px;
+        padding: 4px 10px;
+        display: inline-block;
+        min-width: 220px;
+    }
+
+    .typewriter-text {
+        color: #000;
+        font-weight: 800;
+        font-size: 12px;
+        font-family: monospace;
+        text-transform: uppercase;
+        margin: 0;
+    }
+</style>
 
 <script>
 
@@ -793,6 +769,7 @@ st.markdown(
 
 col1, col2 = st.columns([10, 1])
 
+
 with col1:
 
     chat_val = st.chat_input(
@@ -854,8 +831,7 @@ with col2:
 
             except Exception:
                 st.error(
-                    "Mic transcription failed. "
-                    "Please try again or type your request."
+                    "Mic failed. Please try again or type your request."
                 )
 
 
@@ -921,8 +897,7 @@ if st.button(
         )
 
         st.caption(
-            "Use the copy icon at the top right "
-            "of the black box."
+            "Use the copy icon at the top right of the black box."
         )
 
         # ---------------------------------------------
@@ -941,46 +916,32 @@ if st.button(
             unsafe_allow_html=True
         )
 
-        # AI_TOOLS is defined above, before this loop.
-        cols = st.columns(4)
+        # Build the cards using HTML.
+        # components.html renders this inside an iframe,
+        # preventing Streamlit from displaying the HTML as text.
 
-        for i, tool in enumerate(AI_TOOLS):
+        ai_cards = ""
 
-            col = cols[i % 4]
+        for tool in AI_TOOLS:
 
-            with col:
+            name = html.escape(tool["name"])
+            url = html.escape(tool["url"], quote=True)
+            icon = html.escape(tool["icon"], quote=True)
+            color = html.escape(tool["color"], quote=True)
+            initial = html.escape(tool["initial"])
 
-                tool_name = html.escape(tool["name"])
-                tool_url = html.escape(
-                    tool["url"],
-                    quote=True
-                )
-                tool_icon = html.escape(
-                    tool["icon"],
-                    quote=True
-                )
-                tool_color = html.escape(
-                    tool["color"],
-                    quote=True
-                )
-                tool_initial = html.escape(
-                    tool["initial"]
-                )
-
-                fallback_id = f"ai-fallback-{i}"
-
-                card_html = f"""
+            ai_cards += f"""
                 <a
-                    href="{tool_url}"
+                    class="ai-card"
+                    href="{url}"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="ai-card"
                 >
 
                     <img
-                        src="{tool_icon}"
-                        alt="{tool_name} logo"
                         class="ai-logo"
+                        src="{icon}"
+                        alt="{name} logo"
                         onerror="
                             this.style.display='none';
                             this.nextElementSibling.style.display='flex';
@@ -988,37 +949,144 @@ if st.button(
                     >
 
                     <div
-                        id="{fallback_id}"
                         class="ai-fallback"
                         style="
                             display:none;
-                            background-color:{tool_color};
+                            background-color:{color};
                             color:#ffffff;
                         "
                     >
-                        {tool_initial}
+                        {initial}
                     </div>
 
                     <p class="ai-name">
-                        {tool_name}
+                        {name}
                     </p>
 
                 </a>
-                """
+            """
 
-                # IMPORTANT:
-                # Render HTML, not a Python code block.
-                st.markdown(
-                    card_html,
-                    unsafe_allow_html=True
-                )
+        ai_html = f"""
+        <!DOCTYPE html>
 
-    except Exception as error:
+        <html>
 
-        st.error(
-            "Something went wrong while generating "
-            "your prompt. Please check your Groq API "
-            "configuration and try again."
+        <head>
+
+            <meta charset="UTF-8">
+
+            <meta name="viewport"
+                  content="width=device-width, initial-scale=1.0">
+
+            <style>
+
+                * {{
+                    box-sizing: border-box;
+                }}
+
+                body {{
+                    margin: 0;
+                    padding: 5px;
+                    background: transparent;
+                    font-family: Arial, Helvetica, sans-serif;
+                }}
+
+                .ai-grid {{
+                    display: grid;
+                    grid-template-columns: repeat(4, minmax(0, 1fr));
+                    gap: 12px;
+                    width: 100%;
+                }}
+
+                .ai-card {{
+                    min-height: 110px;
+                    padding: 12px 5px;
+
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+
+                    background: rgba(255,255,255,0.97);
+                    border: 2px solid #E0E0E0;
+                    border-radius: 14px;
+
+                    text-decoration: none;
+                    color: #222222;
+
+                    transition: all 0.2s ease;
+                }}
+
+                .ai-card:hover {{
+                    border-color: #FFD500;
+                    transform: translateY(-4px);
+                    box-shadow: 0 5px 14px rgba(0,0,0,0.10);
+                }}
+
+                .ai-logo {{
+                    width: 42px;
+                    height: 42px;
+                    object-fit: contain;
+                    display: block;
+                    margin-bottom: 9px;
+                }}
+
+                .ai-fallback {{
+                    width: 42px;
+                    height: 42px;
+                    border-radius: 50%;
+
+                    align-items: center;
+                    justify-content: center;
+
+                    font-size: 20px;
+                    font-weight: bold;
+
+                    margin-bottom: 9px;
+                }}
+
+                .ai-name {{
+                    font-size: 12px;
+                    font-weight: 800;
+                    text-align: center;
+                    margin: 0;
+                    color: #222222;
+                }}
+
+                @media (max-width: 500px) {{
+
+                    .ai-grid {{
+                        grid-template-columns: repeat(2, minmax(0, 1fr));
+                    }}
+
+                }}
+
+            </style>
+
+        </head>
+
+        <body>
+
+            <div class="ai-grid">
+
+                {ai_cards}
+
+            </div>
+
+        </body>
+
+        </html>
+        """
+
+        components.html(
+            ai_html,
+            height=260,
+            scrolling=False
         )
 
-        st.exception(error)
+    except Exception:
+        st.error(
+            "Something went wrong while generating your prompt. "
+            "Please check your Groq API configuration and try again."
+        )
+        st.exception(Exception)
