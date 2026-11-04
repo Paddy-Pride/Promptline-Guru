@@ -110,18 +110,18 @@ AI_TOOLS = [
         "initial": "P"
     },
     {
-        "name": "You.com",
-        "url": "https://you.com/",
-        "icon": "https://cdn.simpleicons.org/youdotcom/7B3FE4",
-        "color": "#7B3FE4",
-        "initial": "Y"
+        "name": "Meta AI",
+        "url": "https://www.meta.ai/",
+        "icon": "https://registry.npmmirror.com/@lobehub/icons-static-svg/latest/files/icons/meta-color.svg",
+        "color": "#0064E0",
+        "initial": "M"
     },
     {
-        "name": "Phind",
-        "url": "https://www.phind.com/",
-        "icon": "https://cdn.simpleicons.org/phind/00A67E",
-        "color": "#00A67E",
-        "initial": "P"
+        "name": "Copilot",
+        "url": "https://copilot.microsoft.com/",
+        "icon": "https://cdn.simpleicons.org/githubcopilot/258FFA",
+        "color": "#258FFA",
+        "initial": "C"
     }
 ]
 
@@ -560,6 +560,83 @@ st.markdown("""
     hr {
         border-color: rgba(0, 0, 0, 0.1);
         margin: 0.8rem 0;
+    }
+
+    /* ===== MOBILE RESPONSIVENESS ===== */
+    @media (max-width: 768px) {
+        .block-container {
+            padding-top: 2rem !important;
+            padding-bottom: 10vh !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            max-width: 100% !important;
+        }
+
+        .block-container > div:first-child {
+            padding: 1.2rem !important;
+            border-radius: 16px !important;
+        }
+
+        h1 {
+            font-size: 1.5rem !important;
+        }
+
+        .subtitle {
+            font-size: 0.8rem !important;
+        }
+
+        .stButton > button {
+            height: 44px !important;
+            font-size: 0.85rem !important;
+        }
+
+        [data-testid="stChatInput"] {
+            min-height: 48px !important;
+        }
+
+        [data-testid="stAudioInput"] button {
+            width: 46px !important;
+            min-width: 46px !important;
+            height: 46px !important;
+            min-height: 46px !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .block-container {
+            padding-top: 1.5rem !important;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+        }
+
+        .block-container > div:first-child {
+            padding: 1rem !important;
+            border-radius: 14px !important;
+        }
+
+        h1 {
+            font-size: 1.3rem !important;
+        }
+
+        .ai-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 8px !important;
+        }
+
+        .ai-card {
+            min-height: 90px !important;
+            padding: 10px 6px !important;
+        }
+
+        .ai-logo,
+        .ai-fallback {
+            width: 32px !important;
+            height: 32px !important;
+        }
+
+        .ai-name {
+            font-size: 0.65rem !important;
+        }
     }
 
 </style>
