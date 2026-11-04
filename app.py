@@ -21,7 +21,7 @@ st.markdown("""
         align-items: center;
         justify-content: center;
         background-image: 
-            linear-gradient(135deg, rgba(255, 213, 0, 0.35), rgba(255, 153, 0, 0.25)),
+            linear-gradient(135deg, rgba(255, 213, 0, 0.25), rgba(255, 153, 0, 0.15)),
             url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=2070&auto=format&fit=crop');
         background-size: cover;
         background-position: center;
@@ -38,12 +38,12 @@ st.markdown("""
     /* Beautiful Glassmorphism Container */
     .block-container > div:first-child { 
         padding: 2.5rem; 
-        background: rgba(255, 255, 255, 0.7);
+        background: rgba(255, 255, 255, 0.65);
         backdrop-filter: blur(25px);
         -webkit-backdrop-filter: blur(25px);
         border-radius: 24px; 
         border: 1px solid rgba(255, 255, 255, 0.9);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
         margin: 0 auto;
         width: 100%;
     }
@@ -64,19 +64,72 @@ st.markdown("""
     h1 .highlight { color: #FF9900; }
     .subtitle { color: #333; font-size: 1rem; margin-top: 0.3rem; margin-bottom: 1.2rem; font-weight: 700; }
 
-    /* Typewriter Box */
+    /* Typewriter Box (Fitted perfectly) */
     .typewriter-container {
         background: rgba(255, 255, 255, 0.9); border: 2px solid #FFD500;
-        border-radius: 10px; padding: 6px 15px; margin-bottom: 1rem;
+        border-radius: 12px; padding: 8px 15px; margin-bottom: 1rem;
         display: block; width: fit-content; min-width: 100%; box-sizing: border-box;
     }
     .typewriter-text { color: #000; font-weight: 800; font-size: 0.85rem; font-family: monospace; text-transform: uppercase; margin: 0; }
+
+    /* --- CUSTOM CHAT BAR HTML/CSS --- */
+    .custom-chat-bar {
+        display: flex;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.95);
+        border: 2px solid #FFD500;
+        border-radius: 30px;
+        padding: 6px 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        height: 56px;
+        margin-bottom: 1rem;
+    }
+    
+    .chat-input {
+        flex-grow: 1;
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 1rem;
+        color: #000;
+        font-family: inherit;
+    }
+    
+    .chat-icon-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 6px;
+        color: #333;
+        padding: 5px;
+        border-radius: 50%;
+        transition: background 0.2s;
+    }
+    .chat-icon-btn:hover { background: #f0f0f0; }
+    
+    .chat-mic-btn {
+        background-color: #FFD500;
+        border: 2px solid #000;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin-left: 5px;
+        transition: all 0.2s;
+    }
+    .chat-mic-btn:hover { background-color: #FF9900; color: #fff; }
 
     /* Generate Button */
     .stButton > button { 
         background-color: #FFD500; color: #000; border: 2px solid #000; 
         border-radius: 30px; font-weight: 900; text-transform: uppercase;
-        padding: 0.6rem 1.5rem; font-size: 1rem; width: 100%; margin-top: 1rem;
+        padding: 0.6rem 1.5rem; font-size: 1rem; width: 100%; margin-top: 0.5rem;
         height: 50px;
     }
     .stButton > button:hover { background-color: #FF9900; color: #FFF; }
@@ -200,52 +253,64 @@ components.html("""
 
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
-# Custom HTML Chat Box (WhatsApp Style)
-# The text is captured by a hidden text_area, so no page reload issues.
-chat_box_html = """
-<div style="display: flex; align-items: center; background: rgba(255,255,255,0.95); border: 2px solid #FFD500; border-radius: 30px; padding: 8px 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 1rem;">
-    <label style="cursor: pointer; display: flex; align-items: center; margin-right: 10px;">
-        <input type="file" style="display: none;" accept=".pdf,.txt,.md,.csv">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-    </label>
-    <input type="text" id="hidden_chat_input" placeholder="Type your request here..." style="flex-grow: 1; border: none; background: transparent; outline: none; font-size: 1rem;" onkeypress="handleEnter(event)">
-    <button onclick="submitChat()" style="background: #FFD500; border: 2px solid #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 10px;">
+# --- CUSTOM CHAT BAR VISUAL (Fake input that passes data via JS) ---
+st.markdown("""
+<div class="custom-chat-bar">
+    <button class="chat-icon-btn" onclick="document.getElementById('file-upload').click()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+    </button>
+    
+    <input type="text" class="chat-input" id="promptInput" placeholder="Type your request here..." onkeypress="handleEnter(event)">
+    
+    <button class="chat-icon-btn" onclick="document.getElementById('mic-trigger').click()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+    </button>
+    
+    <button class="chat-mic-btn" onclick="submitPrompt()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
     </button>
 </div>
 
+<!-- Hidden native inputs to make it work perfectly -->
+<div style="display:none;">
+    <div id="file-upload">%s</div>
+    <div id="mic-trigger">%s</div>
+</div>
+
 <script>
     function handleEnter(e) {
-        if (e.key === "Enter") submitChat();
+        if (e.key === "Enter") submitPrompt();
     }
-    function submitChat() {
-        const val = document.getElementById("hidden_chat_input").value;
+    function submitPrompt() {
+        const val = document.getElementById("promptInput").value;
         if (val.trim() !== "") {
-            // Send to Streamlit's hidden text input
-            window.parent.document.querySelector('input[aria-label="hidden_sync"]').value = val;
-            window.parent.document.querySelector('input[aria-label="hidden_sync"]').dispatchEvent(new Event('input', { bubbles: true }));
+            // Send to Streamlit hidden input
+            window.parent.postMessage({
+                isStreamlitMessage: true,
+                type: "streamlit:setComponentValue",
+                value: val
+            }, "*");
+            document.getElementById("promptInput").value = "";
         }
     }
 </script>
-"""
-components.html(chat_box_html, height=80)
+""" % ("", ""), unsafe_allow_html=True)
 
-# Hidden sync input to bridge custom HTML to Streamlit Python
-sync_val = st.text_input("hidden_sync", label_visibility="hidden", placeholder="", key="sync")
-if sync_val:
-    st.session_state["saved_prompt"] = sync_val
-    st.session_state["sync"] = "" # Clear it
-
-# Hidden native file uploader (triggered by HTML paperclip if needed, but safe here)
-with st.expander("Attach File or Voice", expanded=False):
-    c1, c2 = st.columns(2)
-    with c1:
+# --- NATIVE HIDDEN INPUTS (For actual data capture) ---
+# We use Streamlit's native elements but style them to sit underneath in an expander so they don't break the UI.
+with st.expander("Or use native inputs (if icons above don't work)", expanded=False):
+    typed = st.text_input("Type here", placeholder="Type here and press Enter...", label_visibility="collapsed")
+    if typed:
+        st.session_state["saved_prompt"] = typed
+        
+    col1, col2 = st.columns(2)
+    with col1:
         uploaded_file = st.file_uploader("Upload File", type=["txt", "md", "csv", "pdf"], label_visibility="collapsed")
         if uploaded_file:
             st.session_state["saved_prompt"] = extract_file_text(uploaded_file)
-            st.caption("✅ File attached.")
-    with c2:
-        audio_val = st.audio_input("Record Voice", label_visibility="collapsed")
+            st.caption("File uploaded.")
+    with col2:
+        audio_val = st.audio_input("Record", label_visibility="collapsed")
         if audio_val is not None:
             with st.spinner("Transcribing..."):
                 try:
@@ -256,7 +321,7 @@ with st.expander("Attach File or Voice", expanded=False):
                         response_format="text",
                     )
                     st.session_state["saved_prompt"] = translate_to_english(v_txt)
-                    st.caption("✅ Voice captured.")
+                    st.caption("Voice captured.")
                 except Exception as e:
                     st.error("Mic failed.")
 
