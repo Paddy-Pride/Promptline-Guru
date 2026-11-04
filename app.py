@@ -30,12 +30,12 @@ st.markdown("""
     
     .block-container { 
         padding-top: 2vh !important; 
-        padding-bottom: 10vh !important; /* Leaves space down */
+        padding-bottom: 10vh !important; 
         max-width: 850px !important;
         margin: 0 auto !important;
     }
     
-    /* Sleeker Glassmorphism Container */
+    /* Glassmorphism Container */
     .block-container > div:first-child { 
         padding: 2.5rem 2.5rem; 
         background: rgba(255, 255, 255, 0.7);
@@ -72,10 +72,12 @@ st.markdown("""
     }
     .typewriter-text { color: #000; font-weight: 800; font-size: 0.8rem; font-family: monospace; text-transform: uppercase; margin: 0; }
 
-    /* --- FIX AUDIO WIDGET STYLING --- */
-    /* Align columns vertically */
-    div[data-testid="stHorizontalBlock"] { align-items: center !important; }
+    /* --- CHAT BOX & AUDIO BUTTON ALIGNMENT --- */
+    div[data-testid="stHorizontalBlock"] { align-items: center !important; gap: 0rem !important; }
     
+    /* Remove padding from the chat column to push audio closer */
+    div[data-testid="stHorizontalBlock"] > div:nth-child(1) { padding-right: 0px !important; }
+
     /* Chat Input */
     [data-testid="stChatInput"] {
         background-color: rgba(255, 255, 255, 0.95) !important;
@@ -87,13 +89,8 @@ st.markdown("""
     }
     [data-testid="stChatInput"]:focus-within { border-color: #FF9900 !important; }
     
-    /* Audio Input - Deep Target to fix native Streamlit styling */
-    [data-testid="stAudioInput"] { 
-        margin: 0 !important; 
-        padding: 0 !important;
-        width: 54px !important;
-    }
-    /* Target the actual button inside the audio component */
+    /* Audio Input Button */
+    [data-testid="stAudioInput"] { margin: 0 !important; padding: 0 !important; }
     [data-testid="stAudioInput"] button {
         border-radius: 50% !important;
         background-color: #FFD500 !important;
@@ -106,18 +103,8 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
         color: #000 !important;
     }
-    [data-testid="stAudioInput"] button:hover { 
-        background-color: #FF9900 !important; 
-        color: #fff !important; 
-    }
-    [data-testid="stAudioInput"] button svg { 
-        width: 24px !important; 
-        height: 24px !important; 
-    }
-    /* Hide the native dropdown text if any */
-    [data-testid="stAudioInput"] > div {
-        background: transparent !important;
-    }
+    [data-testid="stAudioInput"] button:hover { background-color: #FF9900 !important; color: #fff !important; }
+    [data-testid="stAudioInput"] button svg { width: 24px !important; height: 24px !important; }
 
     /* Generate Button */
     .stButton > button { 
@@ -165,14 +152,15 @@ DOMAINS = {
 
 GROQ_LANGS = {"English": "en", "Swahili": "sw", "French": "fr", "Arabic": "ar", "Portuguese": "pt", "Spanish": "es"}
 
+# Using -color variants from Lobe Icons
 AI_TOOLS = [
-    {"name": "ChatGPT", "url": "https://chat.openai.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/openai.png", "color": "#10A37F", "initial": "C"},
-    {"name": "Claude", "url": "https://claude.ai", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/claude.png", "color": "#D97757", "initial": "C"},
-    {"name": "Gemini", "url": "https://gemini.google.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/gemini.png", "color": "#4285F4", "initial": "G"},
-    {"name": "Grok", "url": "https://grok.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/grok.png", "color": "#000000", "initial": "G"},
-    {"name": "DeepSeek", "url": "https://chat.deepseek.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/deepseek.png", "color": "#4D6BFE", "initial": "D"},
-    {"name": "Copilot", "url": "https://copilot.microsoft.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/copilot.png", "color": "#0078D4", "initial": "C"},
-    {"name": "Perplexity", "url": "https://www.perplexity.ai", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/light/perplexity.png", "color": "#20808D", "initial": "P"},
+    {"name": "ChatGPT", "url": "https://chat.openai.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/openai-color.png", "color": "#10A37F", "initial": "C"},
+    {"name": "Claude", "url": "https://claude.ai", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/claude-color.png", "color": "#D97757", "initial": "C"},
+    {"name": "Gemini", "url": "https://gemini.google.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/gemini-color.png", "color": "#4285F4", "initial": "G"},
+    {"name": "Grok", "url": "https://grok.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/grok-color.png", "color": "#000000", "initial": "G"},
+    {"name": "DeepSeek", "url": "https://chat.deepseek.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/deepseek-color.png", "color": "#4D6BFE", "initial": "D"},
+    {"name": "Copilot", "url": "https://copilot.microsoft.com", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/copilot-color.png", "color": "#0078D4", "initial": "C"},
+    {"name": "Perplexity", "url": "https://www.perplexity.ai", "icon": "https://unpkg.com/@lobehub/icons-static-png@latest/color/perplexity-color.png", "color": "#20808D", "initial": "P"},
 ]
 
 META_SYSTEM = """You are a senior prompt engineer. Convert a rough request into a production-ready prompt.
@@ -248,7 +236,8 @@ components.html("""
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
 # --- CHAT BOX & AUDIO LAYOUT ---
-col1, col2 = st.columns([8, 1])
+# Adjusted column ratio to 10:1 for tight alignment
+col1, col2 = st.columns([10, 1])
 
 with col1:
     chat_val = st.chat_input("Type your request here...", accept_file=True, file_type=["txt", "md", "csv", "pdf"])
@@ -296,7 +285,7 @@ if st.button("GENERATE PROMPT", key="gen"):
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown('<div class="card-title">Open prompt with</div>', unsafe_allow_html=True)
 
-    # AI Logos with Fallback
+    # AI Logos with Color and Fallback
     cols = st.columns(4)
     for i, tool in enumerate(AI_TOOLS):
         col = cols[i % 4]
