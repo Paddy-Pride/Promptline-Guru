@@ -117,11 +117,11 @@ AI_TOOLS = [
         "initial": "M"
     },
     {
-        "name": "Copilot",
+        "name": "MS Copilot",
         "url": "https://copilot.microsoft.com/",
-        "icon": "https://cdn.simpleicons.org/githubcopilot/258FFA",
+        "icon": "https://upload.wikimedia.org/wikipedia/commons/1/13/Microsoft_Copilot_Icon.svg",
         "color": "#258FFA",
-        "initial": "C"
+        "initial": "M"
     }
 ]
 
@@ -291,8 +291,10 @@ st.markdown("""
 
         margin-bottom: 0.8rem;
 
-        display: inline-block;
-        min-width: 220px;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
     }
 
     .typewriter-text {
@@ -304,6 +306,9 @@ st.markdown("""
         text-transform: uppercase;
 
         margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* CHAT AND AUDIO ALIGNMENT */
@@ -331,22 +336,37 @@ st.markdown("""
         border-color: #FF9900 !important;
     }
 
-    /* AUDIO INPUT */
+    /* AUDIO INPUT - FORCE CENTERED BUTTON */
 
     [data-testid="stAudioInput"] {
         width: 56px !important;
         min-width: 56px !important;
+        max-width: 56px !important;
 
+        height: 56px !important;
         min-height: 56px !important;
+        max-height: 56px !important;
 
         margin: 0 !important;
-        padding: 2px !important;
+        padding: 0 !important;
 
         overflow: visible !important;
 
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        flex-direction: column !important;
+    }
+
+    [data-testid="stAudioInput"] > div,
+    [data-testid="stAudioInput"] > div > div {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        gap: 0 !important;
     }
 
     [data-testid="stAudioInput"] > div > div:first-child {
@@ -356,9 +376,11 @@ st.markdown("""
     [data-testid="stAudioInput"] button {
         width: 52px !important;
         min-width: 52px !important;
+        max-width: 52px !important;
 
         height: 52px !important;
         min-height: 52px !important;
+        max-height: 52px !important;
 
         border-radius: 50% !important;
 
@@ -375,8 +397,12 @@ st.markdown("""
         align-items: center !important;
         justify-content: center !important;
 
-        margin: 0 !important;
+        margin: 0 auto !important;
         padding: 0 !important;
+
+        position: relative !important;
+        left: 0 !important;
+        right: 0 !important;
 
         box-shadow:
             0 5px 14px rgba(0, 0, 0, 0.16),
@@ -469,12 +495,6 @@ st.markdown("""
         margin: 0 !important;
         padding: 0 !important;
         box-sizing: border-box !important;
-    }
-
-    @media (max-width: 640px) {
-        .ai-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        }
     }
 
     .ai-card {
@@ -585,6 +605,10 @@ st.markdown("""
             font-size: 0.8rem !important;
         }
 
+        .typewriter-text {
+            font-size: 0.65rem !important;
+        }
+
         .stButton > button {
             height: 44px !important;
             font-size: 0.85rem !important;
@@ -597,8 +621,14 @@ st.markdown("""
         [data-testid="stAudioInput"] button {
             width: 46px !important;
             min-width: 46px !important;
+            max-width: 46px !important;
             height: 46px !important;
             min-height: 46px !important;
+            max-height: 46px !important;
+        }
+
+        .ai-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
         }
     }
 
@@ -616,6 +646,10 @@ st.markdown("""
 
         h1 {
             font-size: 1.3rem !important;
+        }
+
+        .typewriter-text {
+            font-size: 0.55rem !important;
         }
 
         .ai-grid {
@@ -901,7 +935,7 @@ components.html("""
     })();
 
 </script>
-""", height=40)
+""", height=44)
 
 
 st.markdown(
