@@ -11,93 +11,118 @@ st.set_page_config(page_title="Promptline Guru", page_icon=None, layout="wide")
 
 st.markdown("""
 <style>
-    /* Global Theme: Light, Energetic Pulse Vibe */
+    /* Global Theme */
     html, body, [class*="css"] { font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif; }
     
-    /* Background Image with Light Overlay */
+    /* Background: Energetic runner image with a vibrant gradient overlay */
     .stApp { 
         background-image: 
-            linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)),
+            linear-gradient(135deg, rgba(255, 213, 0, 0.4), rgba(255, 153, 0, 0.3)),
             url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=2070&auto=format&fit=crop');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
     }
     
-    /* Main Layout Container */
+    /* Glassmorphism Container */
     .block-container { 
-        padding-top: 2rem; 
-        max-width: 900px; 
-        background-color: rgba(255, 255, 255, 0.95); 
-        border-radius: 24px; 
-        padding-bottom: 2rem;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        border: 2px solid #FFD500;
-        margin-top: 2rem;
+        padding: 3rem 2.5rem; 
+        max-width: 850px; 
+        background: rgba(255, 255, 255, 0.65); /* Frosted glass */
+        backdrop-filter: blur(16px); /* The glass blur effect */
+        -webkit-backdrop-filter: blur(16px);
+        border-radius: 28px; 
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        margin-top: 3rem;
+        margin-bottom: 3rem;
     }
 
-    /* Typography: Punchy, Bold, Reflecting the App */
+    /* App Name Tag */
+    .plg-tag { 
+        display: inline-block; 
+        background: #FFD500; 
+        color: #000000; 
+        font-weight: 900; 
+        font-size: 0.8rem; 
+        padding: 0.3rem 1rem; 
+        border-radius: 20px; 
+        letter-spacing: 0.1em; 
+        margin-bottom: 1rem; 
+        border: 2px solid #000000;
+        text-transform: uppercase;
+    }
+
+    /* Typography */
     h1 { 
         font-size: 2.8rem; 
         font-weight: 900; 
-        color: #000000; 
+        color: #111111; 
         letter-spacing: -0.03em; 
         line-height: 1.1;
         margin-bottom: 0;
         text-transform: uppercase;
     }
-    h1 .highlight { color: #FF9900; /* Vibrant Orange */ }
+    h1 .highlight { color: #FF9900; }
     .subtitle { color: #333333; font-size: 1.05rem; margin-top: 0.5rem; margin-bottom: 2rem; font-weight: 700; }
     
-    /* Text Elements */
-    .card-title { color: #000000; font-weight: 900; font-size: 1.1rem; margin-bottom: 0.5rem; text-transform: uppercase; border-left: 5px solid #FFD500; padding-left: 10px;}
+    /* Card Titles */
+    .card-title { 
+        color: #000000; 
+        font-weight: 900; 
+        font-size: 1rem; 
+        margin-bottom: 0.5rem; 
+        text-transform: uppercase; 
+        border-left: 4px solid #FF9900; 
+        padding-left: 10px;
+    }
 
-    /* Input Fields */
+    /* Input Fields (Also slightly glassy) */
     .stTextArea textarea { 
-        background-color: #F8F9FA !important; 
+        background-color: rgba(255, 255, 255, 0.8) !important; 
         border-radius: 16px; 
-        border: 2px solid #CCCCCC; 
+        border: 1px solid rgba(200, 200, 200, 0.5); 
         color: #000000 !important;
         font-size: 1.05rem; 
+        backdrop-filter: blur(4px);
     }
-    .stTextArea textarea:focus { border-color: #FF9900; box-shadow: 0 0 0 4px rgba(255,153,0,0.2); }
+    .stTextArea textarea:focus { border-color: #FF9900; box-shadow: 0 0 0 3px rgba(255,153,0,0.2); }
     
     /* Dropdowns */
     .stSelectbox > div > div { 
-        background-color: #F8F9FA !important; 
-        border: 2px solid #CCCCCC; 
+        background-color: rgba(255, 255, 255, 0.8) !important; 
+        border: 1px solid rgba(200, 200, 200, 0.5); 
         border-radius: 12px; 
         color: #000000 !important;
-        font-weight: 600;
+        font-weight: 700;
     }
     
-    /* The Main Action Button */
+    /* Action Button */
     .stButton > button { 
-        background-color: #FFD500; /* Electric Yellow */
+        background-color: #FFD500; 
         color: #000000; 
         border: 2px solid #000000; 
         border-radius: 40px; 
         font-weight: 900; 
         text-transform: uppercase;
         padding: 0.8rem 2rem; 
-        font-size: 1.2rem; 
+        font-size: 1.1rem; 
         width: 100%; 
         transition: all 0.2s ease;
         margin-top: 1rem;
     }
     .stButton > button:hover { 
-        background-color: #FF9900; /* Orange on hover */
+        background-color: #FF9900; 
         color: #FFFFFF; 
-        border-color: #FF9900;
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(255,153,0,0.3);
+        box-shadow: 0 5px 15px rgba(255,153,0,0.4);
     }
     
-    /* AI Tool Link Buttons */
+    /* AI Tool Buttons */
     .stLinkButton > a { 
-        background-color: #FFFFFF; 
+        background-color: rgba(255, 255, 255, 0.7); 
         color: #000000; 
-        border: 2px solid #CCCCCC; 
+        border: 1px solid rgba(200, 200, 200, 0.8); 
         border-radius: 30px; 
         padding: 0.5rem 0.8rem; 
         font-weight: 800; 
@@ -106,6 +131,7 @@ st.markdown("""
         width: 100%; 
         text-align: center; 
         transition: all 0.15s;
+        backdrop-filter: blur(4px);
     }
     .stLinkButton > a:hover { 
         background-color: #FFD500; 
@@ -113,21 +139,17 @@ st.markdown("""
         color: #000000;
     }
 
-    /* Output Code Block */
+    /* Output Code Block (Darker glass to stand out) */
     .stCodeBlock pre { 
-        background: #1A1A1A !important; 
+        background: rgba(20, 20, 20, 0.95) !important; 
         color: #FFD500 !important; 
         border-radius: 16px; 
-        border: 3px solid #FFD500;
+        border: 2px solid rgba(255, 213, 0, 0.5);
         font-size: 0.95rem;
     }
     
-    /* Dividers */
-    hr { border-color: #E0E0E0; margin: 2rem 0; }
-    
-    /* Expander / Captions */
-    .stAlert { border-radius: 12px; }
-    .stCaption { color: #555555 !important; font-weight: 600; }
+    hr { border-color: rgba(0,0,0,0.1); margin: 2rem 0; }
+    .stCaption { color: #444444 !important; font-weight: 600; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -192,6 +214,8 @@ def extract_file_text(f):
     return data.decode("utf-8", errors="replace")
 
 # ========== UI ==========
+# Name brought back to the top
+st.markdown('<div class="plg-tag">PROMPTLINE GURU</div>', unsafe_allow_html=True)
 st.markdown('<h1>Prompt Better.<br>Build <span class="highlight">Faster.</span></h1>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
