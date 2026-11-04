@@ -1,5 +1,4 @@
 import os
-import base64
 import streamlit as st
 import streamlit.components.v1 as components
 from groq import Groq
@@ -11,12 +10,12 @@ client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 st.set_page_config(page_title="Promptline Guru", page_icon=None, layout="wide")
 
+# Custom CSS to compress layout to fit landscape, hide clutter, and style MTN Pulse
 st.markdown("""
 <style>
-    /* Global Theme */
     html, body, [class*="css"] { font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif; }
     
-    /* Background - Energetic Runner */
+    /* Energetic Runner Background */
     .stApp { 
         background-image: 
             linear-gradient(135deg, rgba(255, 213, 0, 0.35), rgba(255, 153, 0, 0.25)),
@@ -26,10 +25,10 @@ st.markdown("""
         background-attachment: fixed;
     }
     
-    /* Glassmorphism Main Container (Compressed to fit screen) */
+    /* Compressed Glassmorphism Container */
     .block-container { 
-        padding: 1rem 2rem 1rem 2rem; 
-        max-width: 900px; 
+        padding: 1.5rem 2rem 1.5rem 2rem; 
+        max-width: 850px; 
         background: rgba(255, 255, 255, 0.75);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
@@ -37,111 +36,72 @@ st.markdown("""
         border: 1px solid rgba(255, 255, 255, 0.8);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         margin-top: 1rem;
-        margin-bottom: 1rem;
     }
 
-    /* Glassmorphism Sidebar */
+    /* Sidebar */
     [data-testid="stSidebar"] {
         background: rgba(255, 255, 255, 0.85);
         backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-right: 1px solid rgba(255, 255, 255, 0.6);
-    }
-    [data-testid="stSidebar"] .stSelectbox label {
-        color: #111111 !important;
-        font-weight: 800;
-        text-transform: uppercase;
-        font-size: 0.85rem;
     }
 
-    /* App Name Tag */
+    /* App Name */
     .plg-tag { 
-        display: inline-block; 
-        background: #FFD500; 
-        color: #000000; 
-        font-weight: 900; 
-        font-size: 0.85rem; 
-        padding: 0.3rem 1rem; 
-        border-radius: 20px; 
-        letter-spacing: 0.1em; 
-        margin-bottom: 0.5rem; 
-        border: 2px solid #000000;
-        text-transform: uppercase;
+        display: inline-block; background: #FFD500; color: #000; 
+        font-weight: 900; font-size: 0.85rem; padding: 0.3rem 1rem; 
+        border-radius: 20px; letter-spacing: 0.1em; margin-bottom: 0.5rem; 
+        border: 2px solid #000; text-transform: uppercase;
     }
 
     /* Typography */
-    h1 { 
-        font-size: 2.2rem; 
-        font-weight: 900; 
-        color: #111111; 
-        letter-spacing: -0.03em; 
-        line-height: 1.1;
-        margin-bottom: 0;
-        margin-top: 0;
-        text-transform: uppercase;
-    }
+    h1 { font-size: 2.2rem; font-weight: 900; color: #111; line-height: 1.1; margin-bottom: 0; margin-top: 0; text-transform: uppercase; }
     h1 .highlight { color: #FF9900; }
-    .subtitle { color: #333333; font-size: 1rem; margin-top: 0.3rem; margin-bottom: 0.8rem; font-weight: 700; }
+    .subtitle { color: #333; font-size: 1rem; margin-top: 0.3rem; margin-bottom: 0.8rem; font-weight: 700; }
 
-    /* Typewriter Message Box */
+    /* Typewriter */
     .typewriter-container {
-        background: rgba(255, 255, 255, 0.9);
-        border: 2px solid #FFD500;
-        border-radius: 12px;
-        padding: 6px 15px;
-        margin-bottom: 1rem;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        display: inline-block;
-        min-width: 300px;
+        background: rgba(255, 255, 255, 0.9); border: 2px solid #FFD500;
+        border-radius: 12px; padding: 6px 15px; margin-bottom: 1rem;
+        display: inline-block; min-width: 300px;
     }
-    .typewriter-text {
-        color: #000000;
-        font-weight: 800;
-        font-size: 0.9rem;
-        font-family: monospace;
-        text-transform: uppercase;
-        margin: 0;
+    .typewriter-text { color: #000; font-weight: 800; font-size: 0.9rem; font-family: monospace; text-transform: uppercase; margin: 0; }
+
+    /* Make Chat Input visually blend into the WhatsApp style */
+    [data-testid="stChatInput"] {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border: 2px solid #FFD500 !important;
+        border-radius: 30px !important;
+        padding: 5px 15px !important;
+    }
+    [data-testid="stChatInput"]:focus-within { border-color: #FF9900 !important; }
+
+    /* Make Audio Input look like a mic button */
+    [data-testid="stAudioInput"] {
+        margin-top: 5px;
+    }
+    [data-testid="stAudioInput"] button {
+        border-radius: 50% !important;
+        background-color: #FFD500 !important;
+        border: 2px solid #000 !important;
+        width: 45px !important;
+        height: 45px !important;
     }
 
-    /* Action Button */
+    /* Generate Button */
     .stButton > button { 
-        background-color: #FFD500; 
-        color: #000000; 
-        border: 2px solid #000000; 
-        border-radius: 40px; 
-        font-weight: 900; 
-        text-transform: uppercase;
-        padding: 0.6rem 2rem; 
-        font-size: 1rem; 
-        width: 100%; 
-        transition: all 0.2s ease;
-        margin-top: 0.5rem;
+        background-color: #FFD500; color: #000; border: 2px solid #000; 
+        border-radius: 40px; font-weight: 900; text-transform: uppercase;
+        padding: 0.6rem 2rem; font-size: 1rem; width: 100%; margin-top: 0.5rem;
     }
-    .stButton > button:hover { 
-        background-color: #FF9900; 
-        color: #FFFFFF; 
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(255,153,0,0.4);
-    }
+    .stButton > button:hover { background-color: #FF9900; color: #FFF; }
     
     /* AI Tool Cards */
     .ai-card { 
         display: flex; flex-direction: column; align-items: center; justify-content: center;
-        background-color: rgba(255, 255, 255, 0.95); 
-        border: 2px solid #E0E0E0; 
-        border-radius: 16px; 
-        padding: 0.8rem 0.5rem; 
-        text-decoration: none; 
-        color: #000; 
-        transition: all 0.2s;
-        height: 100%;
-        margin-bottom: 10px;
+        background-color: rgba(255, 255, 255, 0.95); border: 2px solid #E0E0E0; 
+        border-radius: 16px; padding: 0.8rem 0.5rem; text-decoration: none; color: #000; 
+        transition: all 0.2s; height: 100%; margin-bottom: 10px;
     }
-    .ai-card:hover { 
-        border-color: #FFD500; 
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
+    .ai-card:hover { border-color: #FFD500; transform: translateY(-3px); }
     .ai-logo { width: 32px; height: 32px; margin-bottom: 6px; object-fit: contain; }
     .ai-name { font-weight: 800; font-size: 0.75rem; text-align: center; margin: 0; }
     .ai-fallback { 
@@ -151,15 +111,10 @@ st.markdown("""
 
     /* Output Code Block */
     .stCodeBlock pre { 
-        background: rgba(20, 20, 20, 0.95) !important; 
-        color: #FFD500 !important; 
-        border-radius: 16px; 
-        border: 2px solid rgba(255, 213, 0, 0.5);
-        font-size: 0.95rem;
+        background: rgba(20, 20, 20, 0.95) !important; color: #FFD500 !important; 
+        border-radius: 16px; border: 2px solid rgba(255, 213, 0, 0.5); font-size: 0.95rem;
     }
-    
     hr { border-color: rgba(0,0,0,0.1); margin: 1rem 0; }
-    .stCaption { color: #444444 !important; font-weight: 600; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -226,183 +181,77 @@ def extract_file_text(f):
 # ========== Sidebar Settings ==========
 with st.sidebar:
     st.markdown("<h2 style='text-align: center;'>Settings</h2>", unsafe_allow_html=True)
-    st.markdown("---")
     domain = st.selectbox("Domain", list(DOMAINS.keys()))
     tone = st.selectbox("Tone", ["Professional", "Neutral", "Persuasive", "Instructional"])
     depth = st.selectbox("Depth", ["Concise", "Standard", "Detailed", "Exhaustive"], index=1)
-    st.markdown("---")
     lang_name = st.selectbox("Audio Language", list(GROQ_LANGS.keys()), index=0)
-    st.caption("Note: For Leb Lango, please type instead. Whisper does not support it directly.")
+    st.caption("For Leb Lango, please type instead. Whisper does not support it directly.")
 
 # ========== UI Main ==========
 st.markdown('<div class="plg-tag">PROMPTLINE GURU</div>', unsafe_allow_html=True)
 st.markdown('<h1>Prompt Better.<br>Build <span class="highlight">Faster.</span></h1>', unsafe_allow_html=True)
 
-# Typewriter Animation Component
-typewriter_html = """
-<div class="typewriter-container">
-    <p class="typewriter-text" id="typewriter"></p>
-</div>
+# Typewriter Component
+components.html("""
+<div class="typewriter-container" style="margin-bottom:0px;"><p class="typewriter-text" id="typewriter"></p></div>
 <script>
-    const texts = [
-        "Industry-Grade Production Prompt Engineering",
-        "A Better Way to Work with Generative AI",
-        "Save Time from Frustrating AI Outputs"
-    ];
-    let count = 0, index = 0, currentText = "", letter = "", isDeleting = false;
-    (function type() {
-        if (count === texts.length) count = 0;
-        currentText = texts[count];
-        if (isDeleting) { letter = currentText.slice(0, --index); } 
-        else { letter = currentText.slice(0, ++index); }
-        document.getElementById("typewriter").textContent = letter;
-        let typeSpeed = isDeleting ? 20 : 60;
-        if (!isDeleting && letter.length === currentText.length) { typeSpeed = 2000; isDeleting = true; } 
-        else if (isDeleting && letter.length === 0) { isDeleting = false; count++; typeSpeed = 500; }
-        setTimeout(type, typeSpeed);
+    const texts = ["Industry-Grade Production Prompt Engineering", "A Better Way to Work with Generative AI", "Save Time from Frustrating AI Outputs"];
+    let c = 0, i = 0, t = "", l = "", d = false;
+    (function ty() {
+        if (c === texts.length) c = 0;
+        t = texts[c];
+        l = d ? t.slice(0, --i) : t.slice(0, ++i);
+        document.getElementById("typewriter").textContent = l;
+        let s = d ? 20 : 60;
+        if (!d && l.length === t.length) { s = 2000; d = true; } 
+        else if (d && l.length === 0) { d = false; c++; s = 500; }
+        setTimeout(ty, s);
     })();
 </script>
-"""
-components.html(typewriter_html, height=50)
+""", height=50)
 
 st.markdown('<div class="subtitle">Type, upload, or speak. Instantly generate professional-grade AI prompts.</div>', unsafe_allow_html=True)
 
-# Custom WhatsApp-style Chat Box (Pure HTML/JS to Python Bridge)
-# This perfectly puts text, upload, and audio into one compact pill.
-chat_box_html = """
-<div style="display: flex; align-items: center; background: rgba(255,255,255,0.95); border: 2px solid #FFD500; border-radius: 30px; padding: 5px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-    <input type="text" id="userInput" placeholder="Type your request here..." style="flex-grow: 1; border: none; background: transparent; outline: none; font-size: 1rem; padding: 8px;" oninput="toggleSend()">
+# --- THE EXACT CHAT BOX LAYOUT ---
+# st.chat_input gives you the text box, paperclip (upload), and arrow natively.
+# st.audio_input sits right beside it as the microphone.
+col1, col2 = st.columns([6, 1])
+
+with col1:
+    # Native chat input handles text, file uploads, and the active arrow perfectly.
+    chat_val = st.chat_input("Type your request here...", accept_file=True, file_type=["txt", "md", "csv", "pdf"])
     
-    <!-- Upload Icon (Paperclip) -->
-    <label style="cursor: pointer; padding: 5px; display: flex; align-items: center; margin-right: 5px;">
-        <input type="file" id="fileUpload" style="display: none;" onchange="handleFile(this)">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-    </label>
+    # IMPORTANT FIX: We immediately save to session_state so the text doesn't vanish when Enter is pressed.
+    if chat_val:
+        if chat_val.text:
+            st.session_state["saved_prompt"] = chat_val.text
+        if chat_val.files:
+            for f in chat_val.files:
+                st.session_state["saved_prompt"] = extract_file_text(f)
 
-    <!-- Audio Icon (Mic) -->
-    <div style="cursor: pointer; padding: 5px; display: flex; align-items: center; margin-right: 5px;" onclick="document.getElementById('recorder').style.display='block'">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-    </div>
+with col2:
+    # Visually acts as the mic button next to the chat box
+    audio_val = st.audio_input("", label_visibility="collapsed")
+    if audio_val is not None:
+        with st.spinner("Transcribing..."):
+            try:
+                v_txt = client.audio.transcriptions.create(
+                    file=("req.wav", audio_val.getvalue()),
+                    model="whisper-large-v3",
+                    language=GROQ_LANGS[lang_name],
+                    response_format="text",
+                )
+                st.session_state["saved_prompt"] = translate_to_english(v_txt)
+                st.success("Voice captured!")
+            except Exception as e:
+                st.error("Mic failed.")
 
-    <!-- Send Arrow -->
-    <button id="sendBtn" onclick="sendData()" style="background: #FFD500; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0.5; pointer-events: none; transition: all 0.2s;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-    </button>
-</div>
-
-<!-- Hidden Recorder Dropdown -->
-<div id="recorder" style="display: none; background: white; padding: 10px; border-radius: 10px; margin-top: 10px; border: 2px solid #FFD500;">
-    <p style="margin: 0; font-weight: bold; font-size: 0.8rem; margin-bottom: 5px;">Speak your request (English/Supported Languages)</p>
-    <audio id="audioPlayback" controls style="width: 100%; height: 30px; margin-bottom: 10px;"></audio>
-    <button onclick="startRec()" style="background: #FFD500; border: 1px solid #000; padding: 5px 10px; border-radius: 10px; cursor: pointer; font-weight: bold;">Record</button>
-    <button onclick="stopRec()" style="background: #f0f0f0; border: 1px solid #000; padding: 5px 10px; border-radius: 10px; cursor: pointer; font-weight: bold;">Stop & Attach</button>
-</div>
-
-<script>
-    let mediaRecorder;
-    let audioChunks = [];
-    let uploadedFileName = "";
-
-    function toggleSend() {
-        const text = document.getElementById("userInput").value.trim();
-        const btn = document.getElementById("sendBtn");
-        if (text.length > 0 || uploadedFileName !== "" || audioChunks.length > 0) {
-            btn.style.opacity = "1";
-            btn.style.pointerEvents = "auto";
-            btn.style.background = "#FF9900"; // Orange active state
-        } else {
-            btn.style.opacity = "0.5";
-            btn.style.pointerEvents = "none";
-            btn.style.background = "#FFD500";
-        }
-    }
-
-    function handleFile(input) {
-        if (input.files.length > 0) {
-            uploadedFileName = input.files[0].name;
-            document.getElementById("userInput").value = "File Attached: " + uploadedFileName;
-            toggleSend();
-            // In a real custom component we'd send the actual file, 
-            // here we send a trigger to Streamlit to open the native uploader
-            window.parent.postMessage({isStreamlitMessage: true, type: "streamlit:setComponentValue", value: "__UPLOAD__"}, "*");
-        }
-    }
-
-    function startRec() {
-        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-            mediaRecorder = new MediaRecorder(stream);
-            audioChunks = [];
-            mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
-            mediaRecorder.start();
-        });
-    }
-
-    function stopRec() {
-        if (mediaRecorder) {
-            mediaRecorder.stop();
-            mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                document.getElementById("audioPlayback").src = URL.createObjectURL(audioBlob);
-                document.getElementById("userInput").value = "Audio Attached...";
-                toggleSend();
-                // Tell Streamlit to open native audio input
-                window.parent.postMessage({isStreamlitMessage: true, type: "streamlit:setComponentValue", value: "__AUDIO__"}, "*");
-            };
-        }
-    }
-
-    function sendData() {
-        const text = document.getElementById("userInput").value.trim();
-        if (text) {
-            window.parent.postMessage({isStreamlitMessage: true, type: "streamlit:setComponentValue", value: text}, "*");
-            document.getElementById("userInput").value = "";
-            toggleSend();
-        }
-    }
-</script>
-"""
-# Note: Because of Streamlit's strict iframe security, sending raw audio back via pure JS is highly restricted without a Python backend.
-# So this custom pill instantly triggers the native Streamlit widgets below it if you click the icons.
-# This guarantees 100% functionality without crashes.
-
-st.markdown(chat_box_html, unsafe_allow_html=True)
-
-# We keep native hidden widgets to guarantee the data actually gets to Python
-with st.expander("📎 Attach File or Record Voice (Click icons above to open)", expanded=False):
-    col1, col2 = st.columns(2)
-    with col1:
-        uploaded_file = st.file_uploader("Upload", type=["txt", "md", "csv", "pdf"], label_visibility="collapsed")
-        if uploaded_file:
-            st.session_state["saved_prompt"] = extract_file_text(uploaded_file)
-            st.caption("✅ File Attached")
-    with col2:
-        audio_value = st.audio_input("Record", label_visibility="collapsed")
-        if audio_value is not None:
-            with st.spinner("Transcribing..."):
-                try:
-                    v_text = client.audio.transcriptions.create(
-                        file=("req.wav", audio_value.getvalue()),
-                        model="whisper-large-v3",
-                        language=GROQ_LANGS[lang_name],
-                        response_format="text",
-                    )
-                    st.session_state["saved_prompt"] = translate_to_english(v_text)
-                    st.caption("✅ Voice Attached")
-                except Exception as e:
-                    st.error("Transcription failed.")
-
-# Fallback native input to guarantee text capture
-typed_text = st.text_input("Or type here to be safe:", label_visibility="collapsed", placeholder="Or type your request here...")
-if typed_text:
-    st.session_state["saved_prompt"] = typed_text
-
-st.markdown("<br>", unsafe_allow_html=True)
-
+# --- GENERATION LOGIC ---
 if st.button("GENERATE PROMPT", key="gen"):
     final_input = st.session_state.get("saved_prompt", "").strip()
     
     if not final_input:
-        st.warning("Please provide a request first.")
+        st.warning("Please provide a request (type, upload, or speak).")
         st.stop()
 
     with st.spinner("Forging your prompt..."):
@@ -411,11 +260,12 @@ if st.button("GENERATE PROMPT", key="gen"):
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown('<div class="card-title">Your Professional Prompt</div>', unsafe_allow_html=True)
     st.code(prompt, language="markdown")
-    st.caption("Use the copy icon at the top right.")
+    st.caption("Use the copy icon at the top right of the black box.")
 
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown('<div class="card-title">Open prompt with</div>', unsafe_allow_html=True)
 
+    # AI Logos with fallback
     cols = st.columns(4)
     for i, tool in enumerate(AI_TOOLS):
         col = cols[i % 4]
