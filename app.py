@@ -116,11 +116,11 @@ AI_TOOLS = [
         "initial": "M"
     },
     {
-        "name": "Kimi",
-        "url": "https://kimi.moonshot.cn/",
-        "icon": "https://cdn.simpleicons.org/kimi/000000",
-        "color": "#000000",
-        "initial": "K"
+        "name": "Sunbird AI",
+        "url": "https://sunbird.ai/",
+        "icon": "https://sunbird.ai/favicon.ico",
+        "color": "#F5A623",
+        "initial": "S"
     }
 ]
 
@@ -257,12 +257,12 @@ st.markdown("""
         background: rgba(255, 255, 255, 0.95);
         border: 2px solid #FFD500;
         border-radius: 8px;
-        padding: 4px 10px;
+        padding: 6px 10px;
         margin-bottom: 0.8rem;
         display: block;
         width: 100%;
         box-sizing: border-box;
-        overflow: hidden;
+        min-height: 32px;
     }
 
     .typewriter-text {
@@ -274,6 +274,8 @@ st.markdown("""
         margin: 0;
         white-space: normal;
         word-break: break-word;
+        overflow-wrap: anywhere;
+        line-height: 1.4;
     }
 
     div[data-testid="stHorizontalBlock"] {
@@ -294,6 +296,14 @@ st.markdown("""
         border-color: #FF9900 !important;
     }
 
+    [data-testid="stAudioInput"] {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
     [data-testid="stAudioInput"] button {
         width: 52px !important;
         height: 52px !important;
@@ -305,6 +315,7 @@ st.markdown("""
         align-items: center !important;
         justify-content: center !important;
         padding: 0 !important;
+        margin: 0 auto !important;
         box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
         transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease !important;
     }
@@ -505,6 +516,7 @@ st.markdown("""
 
         .typewriter-text {
             font-size: 0.55rem !important;
+            line-height: 1.3 !important;
         }
 
         [data-testid="stAudioInput"] button {
@@ -688,7 +700,7 @@ components.html("""
         setTimeout(ty, s);
     })();
 </script>
-""", height=44)
+""", height=64)
 
 
 st.markdown(
@@ -722,11 +734,16 @@ with col1:
                 )
 
 with col2:
+    st.markdown(
+        '<div style="display:flex; align-items:center; justify-content:center; height:52px;">',
+        unsafe_allow_html=True
+    )
     audio_val = st.audio_input(
         "",
-        label_visibility="collapsed",
-        width=60
+        label_visibility="collapsed"
     )
+    st.markdown('</div>', unsafe_allow_html=True)
+
     if audio_val is not None:
         with st.spinner("Transcribing..."):
             try:
