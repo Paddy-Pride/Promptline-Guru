@@ -9,19 +9,24 @@ client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 st.set_page_config(page_title="Promptline Guru", page_icon=None, layout="wide")
 
+# MTN Pulse styling: strong yellow #FFCC00, black, white, rounded, bold
 st.markdown("""
 <style>
     html, body, [class*="css"] { font-family: Arial, Helvetica, "Segoe UI", Roboto, sans-serif; }
     .stApp { background-color: #FFFFFF; }
-    h1 { font-size: 2.2rem; border-bottom: 4px solid #FFCC00; padding-bottom: 0.4rem; display: inline-block; color: #000; font-weight: 700; }
-    .stButton > button { background-color: #FFCC00; color: #000; border: 2px solid #000; border-radius: 30px; font-weight: 700; padding: 0.6rem 1.8rem; }
-    .stButton > button:hover { background-color: #000; color: #FFCC00; }
-    .stLinkButton > a { background-color: #FFF9E0; color: #000; border: 1px solid #E0E0E0; border-radius: 12px; padding: 0.5rem 1rem; font-weight: 700; font-size: 0.85rem; text-decoration: none; width: 100%; text-align: center; }
-    .stLinkButton > a:hover { background-color: #FFCC00; border-color: #FFCC00; }
-    .stTextArea textarea { border-radius: 12px; border: 1px solid #CCC; }
-    .stTextArea textarea:focus { border-color: #FFCC00; box-shadow: 0 0 0 2px rgba(255,204,0,0.3); }
-    .stCodeBlock pre { background: #1A1A1A !important; color: #FFCC00 !important; border-radius: 12px; }
-    .plg-tag { display: inline-block; background: #FFCC00; color: #000; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.7rem; border-radius: 20px; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    h1 { font-size: 2.4rem; font-weight: 900; color: #000; letter-spacing: -0.03em; border-bottom: 6px solid #FFCC00; padding-bottom: 0.3rem; display: inline-block; }
+    h2, h3 { font-weight: 800; color: #000; }
+    .stButton > button { background-color: #FFCC00; color: #000; border: 3px solid #000; border-radius: 40px; font-weight: 800; padding: 0.7rem 2rem; font-size: 1rem; letter-spacing: 0.02em; transition: all 0.12s ease; }
+    .stButton > button:hover { background-color: #000; color: #FFCC00; border-color: #000; }
+    .stLinkButton > a { background-color: #FFF9E0; color: #000; border: 2px solid #E0E0E0; border-radius: 14px; padding: 0.55rem 1rem; font-weight: 800; font-size: 0.82rem; text-decoration: none; width: 100%; text-align: center; }
+    .stLinkButton > a:hover { background-color: #FFCC00; border-color: #000; }
+    .stTextArea textarea { border-radius: 14px; border: 2px solid #CCCCCC; font-size: 0.95rem; }
+    .stTextArea textarea:focus { border-color: #FFCC00; box-shadow: 0 0 0 3px rgba(255,204,0,0.25); }
+    .stSelectbox > div > div { border-radius: 12px; border: 2px solid #CCCCCC; }
+    .stCodeBlock pre { background: #1A1A1A !important; color: #FFCC00 !important; border-radius: 14px; border: 2px solid #FFCC00; }
+    .plg-tag { display: inline-block; background: #FFCC00; color: #000; font-weight: 900; font-size: 0.7rem; padding: 0.25rem 0.9rem; border-radius: 20px; letter-spacing: 0.08em; margin-bottom: 0.6rem; border: 2px solid #000; }
+    .stAlert { border-radius: 14px; border-left: 5px solid #FFCC00; }
+    .lang-note { background: #FFF9E0; border-left: 4px solid #FFCC00; padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.85rem; color: #333; margin-bottom: 0.5rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -33,6 +38,16 @@ DOMAINS = {
     "Health": "Health communication. Emphasize accuracy and safety.",
     "Agriculture": "Agricultural extension. Emphasize field-ready guidance.",
     "Government": "Public service delivery. Emphasize clarity and accountability.",
+}
+
+# Languages Groq Whisper handles well for transcription
+GROQ_LANGS = {
+    "English": "en",
+    "Swahili": "sw",
+    "French": "fr",
+    "Arabic": "ar",
+    "Portuguese": "pt",
+    "Spanish": "es",
 }
 
 AI_TOOLS = [
@@ -100,7 +115,6 @@ user_text = st.text_area(
     label_visibility="collapsed",
 )
 
-# Three input columns beneath the textarea: upload, audio, and a spacer
 col_up, col_au = st.columns(2)
 
 with col_up:
@@ -117,6 +131,15 @@ with col_up:
 
 with col_au:
     st.markdown("**Record your request**")
+    st.markdown(
+        '<div class="lang-note">Groq Whisper supports English, Swahili, French, Arabic, and 90+ other languages. '
+        'Luganda, Acholi, Runyankole, Ateso and other Ugandan languages are not directly supported by Groq. '
+        'For those, type the request instead for reliable results.</div>',
+        unsafe_allow_html=True,
+    )
+    selected_lang_name = st.selectbox("Audio language", list(GROQ_LANGS.keys()), index=0)
+    selected_lang_code = GROQ_LANGS[selected_lang_name]
+
     audio_value = st.audio_input("Record", label_visibility="collapsed")
     voice_text = ""
     if audio_value is not None:
@@ -125,6 +148,7 @@ with col_au:
                 voice_text = client.audio.transcriptions.create(
                     file=("req.wav", audio_value.getvalue()),
                     model="whisper-large-v3",
+                    language=selected_lang_code,
                     response_format="text",
                 )
                 st.caption("Transcribed: " + voice_text[:120])
